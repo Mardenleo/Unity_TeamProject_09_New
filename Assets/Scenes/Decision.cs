@@ -8,6 +8,7 @@ public class IntroSequence : MonoBehaviour
 
     void Start()
     {
+        GetComponent<AudioSource>().Play();
         // 지정된 시간이 지나면 LoadNextScene 함수를 실행해라
         StartCoroutine(GoToNextScene());
     }

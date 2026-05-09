@@ -8,6 +8,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/Decision.unity
+    guid: f3d3a869b17e84dd1b5c2dec6015c4a6
+  - enabled: 1
+    path: Assets/Scenes/Main Menu.unity
+    guid: 02b3d6de525924643a97fce79ba6fd67
+  - enabled: 1
+    path: Assets/Scenes/90 Minutes story.unity
+    guid: 6f04d71263f16499dab2ac6d518dfc23
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
