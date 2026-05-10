@@ -52,6 +52,7 @@
     <Compile Include="Assets/Scenes/Decision.cs" />
     <Compile Include="Assets/Scenes/Story.cs" />
     <Compile Include="Assets/TutorialInfo/Scripts/Readme.cs" />
+    <Compile Include="Assets/BallKick.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets/TextMesh Pro/Shaders/TMPro.cginc" />
