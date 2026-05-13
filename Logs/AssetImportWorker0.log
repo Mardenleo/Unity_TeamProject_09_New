@@ -7,9 +7,9 @@ Darwin version:          25.4.0
 Architecture:            arm64
 Running under Rosetta:   NO
 Available memory:        16384 MB
-Date:                    2026-05-12T14:06:25Z
+Date:                    2026-05-12T23:58:51Z
 [Licensing::Module] Trying to connect to existing licensing client channel...
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-marden" at "2026-05-12T14:06:25.519413Z"
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-marden" at "2026-05-12T23:58:51.392145Z"
 
 COMMAND LINE ARGUMENTS:
 /Applications/Unity/Hub/Editor/6000.3.11f1/Unity.app/Contents/MacOS/Unity
@@ -70,12 +70,12 @@ Successfully changed project path to: /Users/marden/Desktop/UnityProjects/soccer
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Player connection [8260049088]  Target information:
+Player connection [8512559296]  Target information:
 
-Player connection [8260049088]  * "[IP] 192.168.35.38 [Port] 0 [Flags] 2 [Guid] 4167809904 [EditorId] 4167809904 [Version] 1048832 [Id] OSXEditor(0,gangbyeongcheol-ui-MacBookAir.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+Player connection [8512559296]  * "[IP] 192.168.123.139 [Port] 0 [Flags] 2 [Guid] 2471235761 [EditorId] 2471235761 [Version] 1048832 [Id] OSXEditor(0,gangbyeongcheol-ui-MacBookAir.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
 
-Player connection [8260049088] Host joined multi-casting on [225.0.0.222:54997]...
-Player connection [8260049088] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [8512559296] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8512559296] Host joined alternative multi-casting on [225.0.0.222:34997]...
 JobSystem: Creating JobQueue using job-worker-count value 4
 Input System module state changed to: Initialized.
 [Physics::Module] Initialized fallback backend.
@@ -87,7 +87,7 @@ Library Redirect Path: Library/
 [Physics::Module] SDK Version: 4.1.2
 [Physics::Module] Integration Version: 1.0.0
 [Physics::Module] Threading Mode: Multi-Threaded
-Refreshing native plugins compatible for Editor in 5.25 ms, found 1 plugins.
+Refreshing native plugins compatible for Editor in 2.85 ms, found 1 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 6000.3.11f1 (3000ef702840)
 [Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.3.11f1/Unity.app/Contents/Resources/UnitySubsystems
@@ -109,21 +109,21 @@ ReadWrite Texture Tier: 2
 	ResponseStatus: Unsupported protocol version '1.18.0'.
 [Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-marden"
 [Licensing::IpcConnector] LicenseClient-marden channel disconnected successfully.
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-marden-6000.3.11" at "2026-05-12T14:06:25.747626Z"
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-marden-6000.3.11" at "2026-05-12T23:58:51.719633Z"
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.0+23225a6
+  Session Id:              595107b9257b44159eded441c9b820da
+  Correlation Id:          716ef9f365e7c02740318262b9155cfc
+  External correlation Id: 7949101169019166837
+  Machine Id:              x1nfKy/d01PGaBtlycOgI3IjwKY=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-marden-6000.3.11" (connect: 0.00s, validation: 0.00s, handshake: 0.03s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-marden-6000.3.11-notifications" at "2026-05-12T23:58:51.754789Z"
+[Licensing::Module] Licensing Background thread has ended after 0.36s
 Initialize mono
 Mono path[0] = '/Applications/Unity/Hub/Editor/6000.3.11f1/Unity.app/Contents/Resources/Scripting/Managed'
 Mono path[1] = '/Applications/Unity/Hub/Editor/6000.3.11f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
 Mono config path = '/Applications/Unity/Hub/Editor/6000.3.11f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56933
-[Licensing::Client] Handshaking with LicensingClient:
-  Version:                 1.18.0+23225a6
-  Session Id:              c2d24b7e4d584ea29befd44aa49a2c87
-  Correlation Id:          339920aaffeb06bb781754c089ef0d6e
-  External correlation Id: 8839623934284647083
-  Machine Id:              x1nfKy/d01PGaBtlycOgI3IjwKY=
-[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-marden-6000.3.11" (connect: 0.00s, validation: 0.00s, handshake: 0.06s)
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-marden-6000.3.11-notifications" at "2026-05-12T14:06:25.803582Z"
-[Licensing::Module] Licensing Background thread has ended after 0.28s
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56078
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: /Applications/Unity/Hub/Editor/6000.3.11f1/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
@@ -137,8 +137,8 @@ Register platform support module: /Applications/Unity/Hub/Editor/6000.3.11f1/Uni
 Register platform support module: /Applications/Unity/Hub/Editor/6000.3.11f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
 [Licensing::Client] Successfully resolved entitlement details
 Register platform support module: /Applications/Unity/Hub/Editor/6000.3.11f1/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
-Registered in 0.003059 seconds.
-- Loaded All Assemblies, in  0.202 seconds
+Registered in 0.001718 seconds.
+- Loaded All Assemblies, in  0.175 seconds
 [usbmuxd] Start listen thread
 [usbmuxd] Listen thread started
 [usbmuxd] Send listen message
@@ -152,35 +152,35 @@ Package Manager log level set to [2]
 [Package Manager] Cannot connect to Unity Package Manager local server
 ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.180 seconds
-Domain Reload Profiling: 381ms
-	BeginReloadAssembly (73ms)
+- Finished resetting the current domain, in  0.205 seconds
+Domain Reload Profiling: 380ms
+	BeginReloadAssembly (50ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (0ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (0ms)
-	RebuildCommonClasses (15ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (17ms)
 	RebuildNativeTypeToScriptingClass (6ms)
 	initialDomainReloadingComplete (20ms)
-	LoadAllAssembliesAndSetupDomain (87ms)
-		LoadAssemblies (74ms)
+	LoadAllAssembliesAndSetupDomain (82ms)
+		LoadAssemblies (49ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (85ms)
-			TypeCache.Refresh (84ms)
-				TypeCache.ScanAssembly (77ms)
+		AnalyzeDomain (81ms)
+			TypeCache.Refresh (80ms)
+				TypeCache.ScanAssembly (71ms)
 			BuildScriptInfoCaches (0ms)
 			ResolveRequiredComponents (0ms)
-	FinalizeReload (180ms)
+	FinalizeReload (205ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (159ms)
+		SetupLoadedEditorAssemblies (180ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (40ms)
+			InitializePlatformSupportModulesInManaged (44ms)
 			SetLoadedEditorAssemblies (2ms)
-			BeforeProcessingInitializeOnLoad (31ms)
-			ProcessInitializeOnLoadAttributes (46ms)
-			ProcessInitializeOnLoadMethodAttributes (40ms)
+			BeforeProcessingInitializeOnLoad (35ms)
+			ProcessInitializeOnLoadAttributes (53ms)
+			ProcessInitializeOnLoadMethodAttributes (47ms)
 			AfterProcessingInitializeOnLoad (0ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
@@ -191,8 +191,8 @@ Worker process is ready to serve import requests
 Import Worker Mode flag is 0x00
 Begin MonoManager ReloadAssembly
 [Licensing::Client] Successfully resolved entitlement details
-- Loaded All Assemblies, in  0.315 seconds
-Refreshing native plugins compatible for Editor in 0.16 ms, found 1 plugins.
+- Loaded All Assemblies, in  0.353 seconds
+Refreshing native plugins compatible for Editor in 0.18 ms, found 1 plugins.
 Native extension for iOS target not found
 Native extension for Android target not found
 Native extension for OSXStandalone target not found
@@ -208,35 +208,35 @@ Native extension for WebGL target not found
 [MODES] Loading mode Default (0) for mode-current-id-soccer_game
 ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.317 seconds
-Domain Reload Profiling: 624ms
-	BeginReloadAssembly (49ms)
+- Finished resetting the current domain, in  0.351 seconds
+Domain Reload Profiling: 704ms
+	BeginReloadAssembly (70ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (2ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (8ms)
-	RebuildCommonClasses (15ms)
+		CreateAndSetChildDomain (24ms)
+	RebuildCommonClasses (17ms)
 	RebuildNativeTypeToScriptingClass (6ms)
-	initialDomainReloadingComplete (13ms)
-	LoadAllAssembliesAndSetupDomain (226ms)
-		LoadAssemblies (142ms)
+	initialDomainReloadingComplete (14ms)
+	LoadAllAssembliesAndSetupDomain (245ms)
+		LoadAssemblies (147ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (106ms)
-			TypeCache.Refresh (77ms)
-				TypeCache.ScanAssembly (68ms)
-			BuildScriptInfoCaches (23ms)
-			ResolveRequiredComponents (4ms)
-	FinalizeReload (317ms)
+		AnalyzeDomain (125ms)
+			TypeCache.Refresh (92ms)
+				TypeCache.ScanAssembly (82ms)
+			BuildScriptInfoCaches (25ms)
+			ResolveRequiredComponents (5ms)
+	FinalizeReload (351ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (233ms)
+		SetupLoadedEditorAssemblies (257ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (6ms)
-			SetLoadedEditorAssemblies (2ms)
-			BeforeProcessingInitializeOnLoad (53ms)
-			ProcessInitializeOnLoadAttributes (136ms)
-			ProcessInitializeOnLoadMethodAttributes (35ms)
+			InitializePlatformSupportModulesInManaged (7ms)
+			SetLoadedEditorAssemblies (3ms)
+			BeforeProcessingInitializeOnLoad (60ms)
+			ProcessInitializeOnLoadAttributes (148ms)
+			ProcessInitializeOnLoadMethodAttributes (39ms)
 			AfterProcessingInitializeOnLoad (0ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
@@ -249,234 +249,68 @@ WARNING: Shader Did you use #pragma only_renderers and omit this platform?
 WARNING: Shader If subshaders removal was intentional, you may have forgotten turning Fallback off?
 Launching external process: /Applications/Unity/Hub/Editor/6000.3.11f1/Unity.app/Contents/Helpers/UnityShaderCompiler
 Launched and connected shader compiler UnityShaderCompiler after 0.02 seconds
-Refreshing native plugins compatible for Editor in 0.21 ms, found 1 plugins.
+Refreshing native plugins compatible for Editor in 0.20 ms, found 1 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 20 Unused Serialized files (Serialized files now loaded: 0)
 Unloading 6615 unused Assets / (4.2 MB). Loaded Objects now: 7449.
-Memory consumption went from 152.2 MB to 148.0 MB.
-Total: 4.775125 ms (FindLiveObjects: 0.393541 ms CreateObjectMapping: 0.116917 ms MarkObjects: 3.285000 ms  DeleteObjects: 0.979542 ms)
+Memory consumption went from 152.3 MB to 148.1 MB.
+Total: 4.439250 ms (FindLiveObjects: 0.264209 ms CreateObjectMapping: 0.132375 ms MarkObjects: 3.161542 ms  DeleteObjects: 0.880916 ms)
 
 ========================================================================
 Received Import Request.
-  Time since last request: 6076.326889 seconds.
-  path: Assets/Gemini_Generated_Image_1swk2g1swk2g1swk.png
-  artifactKey: Guid(9f5e499d91fd54632a8f27af6598dbc7) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/Gemini_Generated_Image_1swk2g1swk2g1swk.png using Guid(9f5e499d91fd54632a8f27af6598dbc7) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '29bae333230401639f8b6348ffaba2c2') in 0.041438459 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 1.802752 seconds.
-  path: Assets/Gemini_Generated_Image_1swk2g1swk2g1swk.png
-  artifactKey: Guid(9f5e499d91fd54632a8f27af6598dbc7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Gemini_Generated_Image_1swk2g1swk2g1swk.png using Guid(9f5e499d91fd54632a8f27af6598dbc7) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '2d562b5cf8adc8406462d5872f7cd6a9') in 0.040872209 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 601.842874 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Soccer Line.png using Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'b20dcbbc5cd81e8cbcf906ec991f9c30') in 0.007470709 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 1.075861 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/Soccer Line.png using Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '7c42f7809f451ad3c189ab7915ac66f2') in 0.009156458 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 158.332007 seconds.
-  path: Assets/Materials/Soccer Line.mat
-  artifactKey: Guid(035d9cb33a5584a568ee40d2c840de86) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/Materials/Soccer Line.mat using Guid(035d9cb33a5584a568ee40d2c840de86) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '91a84811b3cf4714362828172827e7c6') in 0.013398041 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 51.055063 seconds.
-  path: Assets/Materials/Soccer Line.mat
-  artifactKey: Guid(035d9cb33a5584a568ee40d2c840de86) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Materials/Soccer Line.mat using Guid(035d9cb33a5584a568ee40d2c840de86) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '7108a1d91a8d16fad572ea3ca5b52773') in 0.216411834 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 39.702326 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Soccer Line.png using Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '70df0ed3a21eadb8211a3d71029b36bf') in 0.011157333 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.914709 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/Soccer Line.png using Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '79051585b32cd3a91ee7a063e826a2fe') in 0.008113041 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 3
-
-========================================================================
-Received Import Request.
-  Time since last request: 34.356651 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Soccer Line.png using Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '88ed97705b958e2ebfc4fe23a0828d5f') in 0.005806709 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.954480 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/Soccer Line.png using Guid(7266da0930ab94a76a2a01bbbb67b1ab) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'a995051221d0dae800dccd4ac9cb02a2') in 0.004122792 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 36.329110 seconds.
-  path: Assets/Materials/Soccer Line.mat
-  artifactKey: Guid(035d9cb33a5584a568ee40d2c840de86) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Materials/Soccer Line.mat using Guid(035d9cb33a5584a568ee40d2c840de86) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'dbb82d46f9446ec3f830ffd72516d877') in 0.015477041 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 310.138471 seconds.
-  path: Assets/Gemini_Generated_Image_6o69ey6o69ey6o69.png
-  artifactKey: Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/Gemini_Generated_Image_6o69ey6o69ey6o69.png using Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '550975e75e6b75b6b6878b3d599286e3') in 0.007665417 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 2.925758 seconds.
-  path: Assets/Gemini_Generated_Image_6o69ey6o69ey6o69.png
-  artifactKey: Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Gemini_Generated_Image_6o69ey6o69ey6o69.png using Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'e7a125768c094af851de71170c850e65') in 0.01181975 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 17.701892 seconds.
-  path: Assets/Materials/Soccer Line.mat
-  artifactKey: Guid(035d9cb33a5584a568ee40d2c840de86) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Materials/Soccer Line.mat using Guid(035d9cb33a5584a568ee40d2c840de86) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'b82cfe5514f7fda17cf2227dbd997434') in 0.012589792 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 73.932297 seconds.
+  Time since last request: 139.311570 seconds.
   path: Assets/Soccer Line.mat
   artifactKey: Guid(14afea21a990b4bb58f11dbdecb4c418) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Soccer Line.mat using Guid(14afea21a990b4bb58f11dbdecb4c418) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'e4897c3ff569640d1a93953083f521f1') in 0.007826584 seconds
+Start importing Assets/Soccer Line.mat using Guid(14afea21a990b4bb58f11dbdecb4c418) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '82e58be41958ede2989c60cee702769c') in 0.183901125 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
 
 ========================================================================
 Received Import Request.
-  Time since last request: 0.932445 seconds.
+  Time since last request: 62.192620 seconds.
+  path: Assets/Soccer Line3.png
+  artifactKey: Guid(80207ff892e694886a9bd0f2117b7fce) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Soccer Line3.png using Guid(80207ff892e694886a9bd0f2117b7fce) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter)[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+ -> (artifact id: '2ad80ba9ec257aaac60c23eca8f1be34') in 0.0088 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.907641 seconds.
+  path: Assets/Soccer Line3.png
+  artifactKey: Guid(80207ff892e694886a9bd0f2117b7fce) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/Soccer Line3.png using Guid(80207ff892e694886a9bd0f2117b7fce) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'b1ecf380b258bf7e1adb9bd79972e1d3') in 0.045626875 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
+
+========================================================================
+Received Import Request.
+  Time since last request: 27.559590 seconds.
+  path: Assets/Soccer Line.png
+  artifactKey: Guid(80207ff892e694886a9bd0f2117b7fce) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Soccer Line.png using Guid(80207ff892e694886a9bd0f2117b7fce) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '2e027aafdf0145c1ed8753399c3c4735') in 0.016385 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.872579 seconds.
+  path: Assets/Soccer Line.png
+  artifactKey: Guid(80207ff892e694886a9bd0f2117b7fce) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/Soccer Line.png using Guid(80207ff892e694886a9bd0f2117b7fce) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '2f8325d36348d5e248f1b4cce36793e6') in 0.003157583 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
+
+========================================================================
+Received Import Request.
+  Time since last request: 32.255372 seconds.
+  path: Assets/Soccer Line.mat
+  artifactKey: Guid(14afea21a990b4bb58f11dbdecb4c418) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Soccer Line.mat using Guid(14afea21a990b4bb58f11dbdecb4c418) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '9f7f7ebe5bf22d40a66a749a6f158103') in 0.021582542 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.902138 seconds.
   path: Assets/Soccer Line.mat
   artifactKey: Guid(14afea21a990b4bb58f11dbdecb4c418) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/Soccer Line.mat using Guid(14afea21a990b4bb58f11dbdecb4c418) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '2e7e75a41f482b7b2758268425b3e0da') in 0.004406 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 27.153651 seconds.
-  path: Assets/TextMesh Pro/Sprites/EmojiOne.png
-  artifactKey: Guid(dffef66376be4fa480fb02b19edbe903) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/TextMesh Pro/Sprites/EmojiOne.png using Guid(dffef66376be4fa480fb02b19edbe903) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '5335b16a5b4fce1b55734a1d359bcea2') in 0.005584375 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000240 seconds.
-  path: Assets/Scenes/SampleScene/Lightmap-0_comp_dir.png
-  artifactKey: Guid(cedd5501445f24b8888441411cc6d657) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scenes/SampleScene/Lightmap-0_comp_dir.png using Guid(cedd5501445f24b8888441411cc6d657) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '92d969d962a1cfe76b6b69148227dcd1') in 0.002875875 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000069 seconds.
-  path: Assets/Scenes/SampleScene/Lightmap-0_comp_light.exr
-  artifactKey: Guid(35b7e481ecf49414aa9b8addcc160fe4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scenes/SampleScene/Lightmap-0_comp_light.exr using Guid(35b7e481ecf49414aa9b8addcc160fe4) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '19b974d2a43f6da122cbd0f95699b0f9') in 0.006735542 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.000042 seconds.
-  path: Assets/Scenes/SampleScene/ReflectionProbe-0.exr
-  artifactKey: Guid(210bded736bd946f5a070daa2c74cd6b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scenes/SampleScene/ReflectionProbe-0.exr using Guid(210bded736bd946f5a070daa2c74cd6b) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'f34c16f00ab87919d0eb41a7ba87aed9') in 0.016304625 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 296.748100 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Soccer Line.png using Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'd167aee762a3f274d1452cb1a215b5a2') in 0.006069708 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.861923 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/Soccer Line.png using Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '22396f9dafd041eb883745134fdc248c') in 0.006339 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 135.788812 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Soccer Line.png using Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'c34b7cc2e8b8eaf04b1ce95c25203603') in 0.009116875 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.882530 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/Soccer Line.png using Guid(afe5bf1c5348142f395cf87eaff7ffa2) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '2219fe46b4a2de771d7c2109858f1ae5') in 0.006875917 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 817.252149 seconds.
-  path: Assets/KakaoTalk_Photo_2026-05-12-23-49-55.png
-  artifactKey: Guid(2239845945772418b9b2cf3ea0d77362) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/KakaoTalk_Photo_2026-05-12-23-49-55.png using Guid(2239845945772418b9b2cf3ea0d77362) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'bd8340ff656864762aa05f8060f0c729') in 0.010296458 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 11.373432 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(2239845945772418b9b2cf3ea0d77362) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Soccer Line.png using Guid(2239845945772418b9b2cf3ea0d77362) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: 'be50991ecf4e1f2788c822d25e04b639') in 0.005921792 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.916500 seconds.
-  path: Assets/Soccer Line.png
-  artifactKey: Guid(2239845945772418b9b2cf3ea0d77362) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
-Start importing Assets/Soccer Line.png using Guid(2239845945772418b9b2cf3ea0d77362) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '2138047edd20d3499caf5d86258486a4') in 0.003345125 seconds
-Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
-
-========================================================================
-Received Import Request.
-  Time since last request: 79.719696 seconds.
-  path: Assets/Soccer Line.mat
-  artifactKey: Guid(14afea21a990b4bb58f11dbdecb4c418) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Soccer Line.mat using Guid(14afea21a990b4bb58f11dbdecb4c418) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '04fcd26f1702c7b82dee78c249ea6a27') in 0.017067042 seconds
+Start importing Assets/Soccer Line.mat using Guid(14afea21a990b4bb58f11dbdecb4c418) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '9ed3a18ae8ee04cf9bfc3fe38b5b3793') in 0.004847333 seconds
 Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 2
 
