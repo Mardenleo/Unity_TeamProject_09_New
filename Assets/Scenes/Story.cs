@@ -16,6 +16,6 @@ public class Story : MonoBehaviour
     IEnumerator GoToNextScene()
     {
         yield return new WaitForSeconds(delayTime);
-        SceneManager.LoadScene("Main Menu");
+        SceneManager.LoadScene("Main_Menu_Scene");
     }
 }
