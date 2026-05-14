@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &6504962737881543780
+--- !u!1001 &3424535796691596446
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -14,15 +14,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ce64f502a54f31f4f9ef98fbc2a68c05, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.3372016
+      value: -16.041615
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ce64f502a54f31f4f9ef98fbc2a68c05, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.006
+      value: -0.000000053218514
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ce64f502a54f31f4f9ef98fbc2a68c05, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.865
+      value: -56.97188
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ce64f502a54f31f4f9ef98fbc2a68c05, type: 3}
       propertyPath: m_LocalRotation.w
@@ -55,7 +55,7 @@ PrefabInstance:
     - target: {fileID: -1995193734550662009, guid: ce64f502a54f31f4f9ef98fbc2a68c05, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 7b0fb0b0d44a95e41b47adfc59be0819, type: 2}
+      objectReference: {fileID: 2100000, guid: a5ddbd7b5a030dc4fb990e33f9eb4466, type: 2}
     - target: {fileID: -480710557608370346, guid: ce64f502a54f31f4f9ef98fbc2a68c05, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -90,7 +90,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ce64f502a54f31f4f9ef98fbc2a68c05, type: 3}
       propertyPath: m_Name
-      value: player (21)
+      value: Bplayer (9)
       objectReference: {fileID: 0}
     - target: {fileID: 4308596981445705757, guid: ce64f502a54f31f4f9ef98fbc2a68c05, type: 3}
       propertyPath: m_LocalScale.x
