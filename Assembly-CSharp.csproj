@@ -52,7 +52,6 @@
     <Compile Include="Assets/Scenes/Decision.cs" />
     <Compile Include="Assets/Scenes/Story.cs" />
     <Compile Include="Assets/TutorialInfo/Scripts/Readme.cs" />
-    <Compile Include="Assets/Scenes/Main_Menu_Director.cs" />
     <Compile Include="Assets/BallKick.cs" />
     <Compile Include="Assets/Scenes/GamemenuDirector.cs" />
   </ItemGroup>

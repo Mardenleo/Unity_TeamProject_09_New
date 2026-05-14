@@ -23,6 +23,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Match Result.unity
     guid: 02b3d6de525924643a97fce79ba6fd67
+  - enabled: 1
+    path: Assets/Scenes/InventoryScene.unity
+    guid: e9c98be4453374e659f66632a5105449
+  - enabled: 1
+    path: Assets/Scenes/ShopScene.unity
+    guid: 20dc3e642412547e8900565f20284020
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
