@@ -21,6 +21,12 @@ EditorBuildSettings:
     path: Assets/Scenes/GameScene.unity
     guid: b2c5c167a34cb4ff6893ee0bd20b8123
   - enabled: 1
+    path: Assets/Scenes/CustomizingScene.unity
+    guid: 4d81009c6b3214626a7d040e04172564
+  - enabled: 1
+    path: Assets/Scenes/LobbyScene.unity
+    guid: ab5093892b80d46609f1180020a49227
+  - enabled: 1
     path: Assets/Scenes/Match Result.unity
     guid: 02b3d6de525924643a97fce79ba6fd67
   - enabled: 1

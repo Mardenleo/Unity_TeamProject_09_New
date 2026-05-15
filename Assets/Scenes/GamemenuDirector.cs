@@ -95,7 +95,12 @@ public class GamemenuDirector : MonoBehaviour
     // --- 씬 전환 버튼 함수 ---
     public void StartGame() 
     { 
-        SceneManager.LoadScene("GameScene"); 
+        if (PlayerPrefs.GetInt("IsFirstTime", 0) == 0) {
+        SceneManager.LoadScene("CustomizingScene"); // 커스터마이징 씬으로
+        }   
+        else {
+        SceneManager.LoadScene("LobbyScene"); // 이미 했으면 로비로
+        }
     }
 
     public void OpenInventory() 
