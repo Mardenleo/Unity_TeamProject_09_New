@@ -1,106 +1,156 @@
 using UnityEngine;
-using TMPro; // TextMeshPro를 사용한다면 필수
+using TMPro;
+using UnityEngine.SceneManagement; 
+
+public enum TeamType { None, KBC, JMS }
 
 public class CustomizingManager : MonoBehaviour
 {
     [Header("UI Panels")]
-    public GameObject viewName;
-    public GameObject viewHair;
-    public GameObject viewSkin;
+    public GameObject viewTeam; 
+    public GameObject viewName; 
+    public GameObject viewHair; 
+    public GameObject viewSkin; 
 
     [Header("Input")]
-    public TMP_InputField nameInput; // 선수 이름 입력창
+    public TMP_InputField nameInput; 
 
-    [Header("Character Preview")]
-    public Transform characterTransform; // 회전시킬 캐릭터
+    [Header("Character Preview Settings")]
+    public Camera previewCamera;           
+    private int selectedCharacterIndex = 0; // 💡 유저가 선택한 캐릭터 번호 (JMS = 0, KBC = 1)
+
+    [System.Serializable]
+    public struct CharacterData
+    {
+        public Transform characterTransform;  
+        public SkinnedMeshRenderer hairRenderer; 
+        public SkinnedMeshRenderer skinRenderer; 
+        public Vector3 cameraPosition;        
+    }
+
+    [Header("Characters Info")]
+    public CharacterData[] characters; 
 
     [Header("Audio Settings")]
-    // ★ 이 스크립트가 붙은 오브젝트에 AudioSource를 넣고 여기에 연결하세요.
-    public AudioSource bgmSource;       // 배경음악 전용 (인스펙터에서 연결)
-    public AudioSource sfxSource;       // 버튼 효과음 전용 (인스펙터에서 연결)
+    public AudioSource bgmSource;       
+    public AudioSource sfxSource;       
     public AudioClip buttonClickSound;
     
-    private string savedName;
 
     void Start()
     {
+        OpenTeamTab();
         
-        // 처음 시작할 때 이름 입력창만 켜기
-        OpenNameTab();
         if (bgmSource != null && !bgmSource.isPlaying)
         {
             bgmSource.Play();
         }
-    }
-    [Header("Target Mesh")]
-    public SkinnedMeshRenderer hairRenderer; // Ch38_Hair 오브젝트 연결
-    public SkinnedMeshRenderer skinRenderer;
 
-    // 색상을 바꾸는 경우 (참고 이미지의 머리카락 색상 변경)
+        UpdatePreviewCharacter(0);
+    }
+
+    // 캐릭터(팀) 버튼을 누를 때 인덱스 갱신
+    public void SelectCharacter(int index)
+    {
+        PlayClickSound();
+        if (index < 0 || index >= characters.Length) return;
+
+        selectedCharacterIndex = index; // 💡 여기서 0 또는 1이 실시간 저장됨
+        UpdatePreviewCharacter(index);
+    }
+
+    private void UpdatePreviewCharacter(int index)
+    {
+        if (previewCamera != null && characters.Length > index)
+        {
+            previewCamera.transform.position = characters[index].cameraPosition;
+        }
+    }
+
     public void SetHairColor(string colorHex)
     {
         PlayClickSound();
         if (ColorUtility.TryParseHtmlString(colorHex, out Color newColor))
         {
-            hairRenderer.material.color = newColor; // 마테리얼 색상 변경
+            var currentTarget = characters[selectedCharacterIndex].hairRenderer;
+            if (currentTarget != null)
+            {
+                currentTarget.material.color = newColor;
+            }
         }
     }
 
     public void SetSkinColor(string colorHex)
     {
         PlayClickSound();
-        if (skinRenderer == null)
-        {
-            Debug.LogError("skinRenderer가 연결되지 않았습니다!");
-            return;
-        }
+        var currentTarget = characters[selectedCharacterIndex].skinRenderer;
+        if (currentTarget == null) return;
 
         if (ColorUtility.TryParseHtmlString(colorHex, out Color newColor))
         {
-            skinRenderer.material.color = newColor; // 마테리얼 색상 변경
+            currentTarget.material.color = newColor;
         }
     }
     
     // 탭 전환 함수들
-    public void OpenNameTab() { 
-        PlayClickSound();
-        SetAllViewsOff(); 
-        viewName.SetActive(true); 
-        }
-    public void OpenHairTab() { 
-        PlayClickSound();
-        SetAllViewsOff(); 
-        viewHair.SetActive(true); 
-        }
-    public void OpenSkinTab() { 
-        PlayClickSound();
-        SetAllViewsOff(); 
-        viewSkin.SetActive(true); 
-        }
+    public void OpenTeamTab() { PlayClickSound(); SetAllViewsOff(); viewTeam.SetActive(true); }
+    public void OpenNameTab() { PlayClickSound(); SetAllViewsOff(); viewName.SetActive(true); }
+    public void OpenHairTab() { PlayClickSound(); SetAllViewsOff(); viewHair.SetActive(true); }
+    public void OpenSkinTab() { PlayClickSound(); SetAllViewsOff(); viewSkin.SetActive(true); }
 
     private void SetAllViewsOff()
     {
-        viewName.SetActive(false);
-        viewHair.SetActive(false);
-        viewSkin.SetActive(false);
+        if(viewTeam != null) viewTeam.SetActive(false);
+        if(viewName != null) viewName.SetActive(false);
+        if(viewHair != null) viewHair.SetActive(false);
+        if(viewSkin != null) viewSkin.SetActive(false);
     }
 
-    // '적용' 버튼 클릭 시 실행될 함수
-    public void ApplyCustomizing()
-    {
-        PlayClickSound();
-        savedName = nameInput.text;
-        Debug.Log("저장된 선수 이름: " + savedName);
-        // 여기서 실제로 캐릭터 데이터를 저장하거나 다음 씬으로 넘기는 로직 추가 (추가 사항)
-    }
     private void PlayClickSound()
     {
-        // audioSource와 사운드 파일이 잘 등록되어 있는지 확인 후 재생
         if (sfxSource != null && buttonClickSound != null)
         {
-            sfxSource.Stop(); // 효과음만 끊습니다. (배경음악은 무사함!)
+            sfxSource.Stop(); 
             sfxSource.clip = buttonClickSound;
             sfxSource.Play();
         }
+    }
+
+    private TeamType currentChosenTeam = TeamType.None;
+
+    // UI에서 팀 버튼 누를 때 실행 (KBC / JMS 문자열 전달)
+    public void SelectTeam(string teamName)
+    {
+        if (teamName == "KBC") currentChosenTeam = TeamType.KBC;
+        else if (teamName == "JMS") currentChosenTeam = TeamType.JMS;
+    }
+
+    // [적용] 버튼 핵심 함수 (데이터 복사 및 씬 이동)
+    public void OnClickSaveAndGoToLobby()
+    {
+        if (currentChosenTeam == TeamType.None || GameDataManager.Instance == null) return;
+
+        // 1. 선택한 팀 데이터 저장
+        GameDataManager.Instance.selectedTeam = currentChosenTeam;
+
+        // 2. 현재 선택된 캐릭터의 피부색/머리색 실제 마테리얼 컬러 낚아채기
+        if (characters != null && characters.Length > selectedCharacterIndex)
+        {
+            // 피부색 추출 및 전송
+            if (characters[selectedCharacterIndex].skinRenderer != null)
+            {
+                GameDataManager.Instance.selectedSkinColor = characters[selectedCharacterIndex].skinRenderer.material.color;
+            }
+
+            // 머리색 추출 및 전송 (현재 구조상 selectedSkinColor로 함께 공유하거나 보관)
+            if (characters[selectedCharacterIndex].hairRenderer != null)
+            {
+                GameDataManager.Instance.selectedHairColor = characters[selectedCharacterIndex].hairRenderer.material.color;
+            }
+        }
+
+        // 3. 씬 전환 출발!
+        if (currentChosenTeam == TeamType.KBC) SceneManager.LoadScene("Red_LobbyScene");
+        else if (currentChosenTeam == TeamType.JMS) SceneManager.LoadScene("Blue_LobbyScene");
     }
 }

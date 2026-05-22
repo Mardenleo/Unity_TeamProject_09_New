@@ -51,7 +51,10 @@
   <ItemGroup>
     <Compile Include="Assets/Scenes/Decision.cs" />
     <Compile Include="Assets/Scenes/Story.cs" />
+    <Compile Include="Assets/Scenes/Red_Lobby/UpgradeManager.cs" />
     <Compile Include="Assets/TutorialInfo/Scripts/Readme.cs" />
+    <Compile Include="Assets/Scenes/Customizing_Folder/GameDataManager.cs" />
+    <Compile Include="Assets/Scenes/Red_Lobby/LobbyManager.cs" />
     <Compile Include="Assets/BallKick.cs" />
     <Compile Include="Assets/Scenes/Customizing_Folder/RotatePreview.cs" />
     <Compile Include="Assets/Scenes/GamemenuDirector.cs" />
