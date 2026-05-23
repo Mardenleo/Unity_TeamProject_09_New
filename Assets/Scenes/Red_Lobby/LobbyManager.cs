@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LobbyManager : MonoBehaviour
 {
@@ -18,11 +19,11 @@ public class LobbyManager : MonoBehaviour
         
         // 2. 시작할 때 기본 스텟 창만 켜기
         if (viewStats != null) viewStats.SetActive(true);
-        ShowStatsView();
+        ShowStatsMenu();
     }
 
     void ApplyCustomColors()
-{
+    {
     // 데이터 매니저나 로비 플레이어가 비어있다면 리턴
     if (GameDataManager.Instance == null || lobbyPlayer == null) return;
 
@@ -46,10 +47,40 @@ public class LobbyManager : MonoBehaviour
 }
 
     // --- 탭 메뉴 패널 전환 함수들 ---
-    public void ShowStatsView() { SetAllViewsFalse(); viewStats.SetActive(true); }
-    public void ShowBootsView() { SetAllViewsFalse(); viewBoots.SetActive(true); }
-    public void ShowHairView()  { SetAllViewsFalse(); viewHair.SetActive(true); }
-    public void ShowUpgradeView() { SetAllViewsFalse(); viewUpgrade.SetActive(true); }
+    public void ShowStatsMenu()
+    {
+        viewStats.SetActive(true);      // 스텟창은 켜고
+        viewUpgrade.SetActive(false);   // 강화 버튼은 숨깁니다.
+
+        if(viewBoots != null) viewBoots.SetActive(false);
+        if(viewHair != null) viewHair.SetActive(false);
+    }
+
+    // 💡 [능력치 강화] 탭 버튼을 눌렀을 때 (원하시는 기능)
+    public void ShowUpgradeMenu()
+    {
+        viewStats.SetActive(true);      // 스텟창을 그대로 띄워둔 상태에서
+        viewUpgrade.SetActive(true);    // 그 옆에 강화 버튼들을 싹 나타나게 합니다.
+
+        if(viewBoots != null) viewBoots.SetActive(false);
+        if(viewHair != null) viewHair.SetActive(false);
+    }
+
+    public void ShowBootsMenu()
+    {
+        if(viewBoots != null) viewBoots.SetActive(true);
+        viewStats.SetActive(false);
+        viewUpgrade.SetActive(false);
+        if(viewHair != null) viewHair.SetActive(false);
+    }
+
+    public void ShowHairMenu()
+    {
+        if(viewHair != null) viewHair.SetActive(true);
+        viewStats.SetActive(false);
+        viewUpgrade.SetActive(false);
+        if(viewBoots != null) viewBoots.SetActive(false);
+    }
 
     private void SetAllViewsFalse()
     {
@@ -57,5 +88,13 @@ public class LobbyManager : MonoBehaviour
         viewBoots.SetActive(false);
         viewHair.SetActive(false);
         viewUpgrade.SetActive(false);
+    }
+    public void GoToMainMenu()
+    {
+        SceneManager.LoadScene("Main_Menu_Scene");
+    }
+    public void GoToShop()
+    {
+        SceneManager.LoadScene("ShopScene");
     }
 }
