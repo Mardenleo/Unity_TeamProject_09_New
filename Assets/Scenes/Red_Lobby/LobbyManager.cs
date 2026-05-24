@@ -97,4 +97,8 @@ public class LobbyManager : MonoBehaviour
     {
         SceneManager.LoadScene("ShopScene");
     }
+    public void GameStart()
+    {
+        SceneManager.LoadScene("MatchScene");
+    }
 }

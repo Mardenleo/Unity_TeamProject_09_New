@@ -133,6 +133,10 @@ public class CustomizingManager : MonoBehaviour
         // 1. 선택한 팀 데이터 저장
         GameDataManager.Instance.selectedTeam = currentChosenTeam;
 
+        // 🔥 [추가] 이제 캐릭터를 만든 적이 있다고 도장을 찍어줍니다!
+        // 이 한 줄이 있어야 메인 메뉴에서 다시 게임 시작을 누를 때 커스텀 창을 스킵합니다!
+        GameDataManager.Instance.isCharacterCreated = true;
+
         // 2. 현재 선택된 캐릭터의 피부색/머리색 실제 마테리얼 컬러 낚아채기
         if (characters != null && characters.Length > selectedCharacterIndex)
         {
@@ -142,7 +146,7 @@ public class CustomizingManager : MonoBehaviour
                 GameDataManager.Instance.selectedSkinColor = characters[selectedCharacterIndex].skinRenderer.material.color;
             }
 
-            // 머리색 추출 및 전송 (현재 구조상 selectedSkinColor로 함께 공유하거나 보관)
+            // 머리색 추출 및 전송
             if (characters[selectedCharacterIndex].hairRenderer != null)
             {
                 GameDataManager.Instance.selectedHairColor = characters[selectedCharacterIndex].hairRenderer.material.color;
@@ -151,6 +155,6 @@ public class CustomizingManager : MonoBehaviour
 
         // 3. 씬 전환 출발!
         if (currentChosenTeam == TeamType.KBC) SceneManager.LoadScene("Red_LobbyScene");
-        else if (currentChosenTeam == TeamType.JMS) SceneManager.LoadScene("Blue_LobbyScene");
+        else if (currentChosenTeam == TeamType.JMS) SceneManager.LoadScene("Black_LobbyScene");
     }
 }
