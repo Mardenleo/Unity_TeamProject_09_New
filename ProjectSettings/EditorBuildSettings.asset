@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Main_Menu_Scene/Main_Menu_Scene.unity
     guid: 4830aab86b70247168918267426da34b
   - enabled: 1
-    path: Assets/Scenes/GameScene.unity
+    path: Assets/Scenes/InGameManager/GameScene.unity
     guid: b2c5c167a34cb4ff6893ee0bd20b8123
   - enabled: 1
     path: Assets/Scenes/Customizing_Folder/CustomizingScene.unity
@@ -33,7 +33,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Shop/ShopScene.unity
     guid: 8b591d18e1da74e6e939c92c1965eede
   - enabled: 1
-    path: Assets/Scenes/MatchScene.unity
+    path: Assets/Scenes/MatchScene/MatchScene.unity
     guid: 179360a241fdb48bcb4a2c70ea3686fe
   - enabled: 1
     path: Assets/Scenes/MatchResult.unity

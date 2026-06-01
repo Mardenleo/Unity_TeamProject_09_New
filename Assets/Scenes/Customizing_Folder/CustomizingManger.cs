@@ -36,6 +36,12 @@ public class CustomizingManager : MonoBehaviour
     public AudioSource sfxSource;       
     public AudioClip buttonClickSound;
     
+    // 🎨 [확실한 해결책] 유저가 UI 버튼을 눌러 선택한 색상을 실시간으로 임시 보관할 변수들
+    // 초기화 부실로 인한 버그를 막기 위해 기본값은 기본 피부색인 흰색(Color.white)으로 설정합니다.
+    private Color temporarySkinColor = Color.white;
+    private Color temporaryHairColor = Color.white;
+
+    private TeamType currentChosenTeam = TeamType.None;
 
     void Start()
     {
@@ -76,6 +82,9 @@ public class CustomizingManager : MonoBehaviour
             if (currentTarget != null)
             {
                 currentTarget.material.color = newColor;
+                
+                // 🎯 [데이터 각인] 머리 색상 클릭 순간 변수에 저장!
+                temporaryHairColor = newColor;
             }
         }
     }
@@ -89,6 +98,9 @@ public class CustomizingManager : MonoBehaviour
         if (ColorUtility.TryParseHtmlString(colorHex, out Color newColor))
         {
             currentTarget.material.color = newColor;
+            
+            // 🎯 [데이터 각인] 피부 색상 클릭 순간 변수에 저장!
+            temporarySkinColor = newColor;
         }
     }
     
@@ -116,8 +128,6 @@ public class CustomizingManager : MonoBehaviour
         }
     }
 
-    private TeamType currentChosenTeam = TeamType.None;
-
     // UI에서 팀 버튼 누를 때 실행 (KBC / JMS 문자열 전달)
     public void SelectTeam(string teamName)
     {
@@ -133,27 +143,24 @@ public class CustomizingManager : MonoBehaviour
         // 1. 선택한 팀 데이터 저장
         GameDataManager.Instance.selectedTeam = currentChosenTeam;
 
-        // 🔥 [추가] 이제 캐릭터를 만든 적이 있다고 도장을 찍어줍니다!
-        // 이 한 줄이 있어야 메인 메뉴에서 다시 게임 시작을 누를 때 커스텀 창을 스킵합니다!
-        GameDataManager.Instance.isCharacterCreated = true;
-
-        // 2. 현재 선택된 캐릭터의 피부색/머리색 실제 마테리얼 컬러 낚아채기
-        if (characters != null && characters.Length > selectedCharacterIndex)
+        // 2. 입력된 커스텀 이름 전송
+        if (nameInput != null && !string.IsNullOrEmpty(nameInput.text))
         {
-            // 피부색 추출 및 전송
-            if (characters[selectedCharacterIndex].skinRenderer != null)
-            {
-                GameDataManager.Instance.selectedSkinColor = characters[selectedCharacterIndex].skinRenderer.material.color;
-            }
-
-            // 머리색 추출 및 전송
-            if (characters[selectedCharacterIndex].hairRenderer != null)
-            {
-                GameDataManager.Instance.selectedHairColor = characters[selectedCharacterIndex].hairRenderer.material.color;
-            }
+            GameDataManager.Instance.playerCustomName = nameInput.text;
         }
 
-        // 3. 씬 전환 출발!
+        // 3. 인게임에서 내가 조종할 고유 등번호 연동 지정
+        // selectedCharacterIndex가 0(JMS)이면 7번 프리팹을 유저로, 1(KBC)이면 10번 프리팹을 유저로 인식시킵니다.
+        GameDataManager.Instance.selectedPlayerNumber = (selectedCharacterIndex == 0) ? 7 : 10;
+
+        // 4. 캐릭터 생성 완료 플래그 도장 찍기
+        GameDataManager.Instance.isCharacterCreated = true;
+
+        // 5. 🎯 [핵심 변경] 런타임 마테리얼에서 뜯지 않고 변수에 온전하게 기록된 컬러 값을 매니저에 확실하게 다이렉트 전송!
+        GameDataManager.Instance.selectedSkinColor = temporarySkinColor;
+        GameDataManager.Instance.selectedHairColor = temporaryHairColor;
+
+        // 6. 씬 전환 출발!
         if (currentChosenTeam == TeamType.KBC) SceneManager.LoadScene("Red_LobbyScene");
         else if (currentChosenTeam == TeamType.JMS) SceneManager.LoadScene("Black_LobbyScene");
     }

@@ -1,8 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-// 💡 [수정] public enum TeamType 선언부를 중복 방지를 위해 삭제했습니다!
-// 유니티가 프로젝트에 원래 존재하던 TeamType을 자동으로 인식합니다.
 
 public class GameDataManager : MonoBehaviour
 {
@@ -13,11 +11,12 @@ public class GameDataManager : MonoBehaviour
     public TeamType selectedTeam = TeamType.None; // 기존 프로젝트의 TeamType과 연동됩니다.
 
     [Header("--- 커스터마이징 데이터 ---")]
+    public string playerCustomName = "손흥민";
     public Color selectedSkinColor = Color.white;
     public Color selectedHairColor = Color.white; 
 
     [Header("--- 보유 재화 ---")]
-    public int currentGold = 6000; 
+    public int currentGold = 400000; 
 
     [Header("--- 선수 능력치 실제 수치 (0 ~ 100) ---")]
     public int attackStat = 40;
@@ -31,6 +30,9 @@ public class GameDataManager : MonoBehaviour
     [Header("--- 인벤토리 및 상점 데이터 ---")]
     public int currentEquippedBoots = 0;
     public int currentEquippedHair = 0;
+    [Header("--- 현재 유저가 선택한 선수 번호 ---")]
+    // 예: 7을 넣으면 player (7) 프리팹이 유저의 주인공 캐릭터가 됩니다.
+    public int selectedPlayerNumber = 6;
 
     // 유저가 보유 중인 아이템 번호 리스트
     public List<int> ownedBootsList = new List<int>() { 0 };

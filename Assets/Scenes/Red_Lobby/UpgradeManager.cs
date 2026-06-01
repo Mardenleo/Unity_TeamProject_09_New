@@ -113,7 +113,8 @@ public class UpgradeManager : MonoBehaviour
         if (imgBarAttack != null) imgBarAttack.fillAmount = (float)data.attackStat / GameDataManager.MAX_STAT_VALUE;
         if (txtAttackStat != null) txtAttackStat.text = $"파워({data.attackStat})";
         // 💡 수치가 100 이상이면 노란색 버튼(GameObject)을 통째로 숨깁니다!
-        if (btnUpgradeAttack != null) btnUpgradeAttack.gameObject.SetActive(data.attackStat < GameDataManager.MAX_STAT_VALUE);
+        if (btnUpgradeAttack != null) btnUpgradeAttack.interactable = data.attackStat < GameDataManager.MAX_STAT_VALUE;
+
 
         // 📊 2. 스피드 연동 및 버튼 체크
         if (imgBarSpeed != null) imgBarSpeed.fillAmount = (float)data.speedStat / GameDataManager.MAX_STAT_VALUE;

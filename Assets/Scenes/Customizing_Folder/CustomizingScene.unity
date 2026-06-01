@@ -3934,16 +3934,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b3f4b71fa92f49a98f6356f30e8f2ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameDataManager
+  isCharacterCreated: 0
   selectedTeam: 0
+  playerCustomName: "\uC190\uD765\uBBFC"
   selectedSkinColor: {r: 0, g: 0, b: 0, a: 0}
   selectedHairColor: {r: 1, g: 1, b: 1, a: 1}
-  currentGold: 6000
+  currentGold: 400000
   attackStat: 40
   speedStat: 40
   passStat: 30
   defenseStat: 40
   currentEquippedBoots: 0
   currentEquippedHair: 0
+  selectedPlayerNumber: 6
   ownedBootsList: 00000000
   ownedHairList: 00000000
 --- !u!4 &745403387
@@ -8967,7 +8970,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7624749964599712763, guid: a06947add041d43deb941a678c4c41e0, type: 3}
       propertyPath: m_Name
-      value: player (5)
+      value: player (6)
       objectReference: {fileID: 0}
     - target: {fileID: 7624749964599712763, guid: a06947add041d43deb941a678c4c41e0, type: 3}
       propertyPath: m_Layer
