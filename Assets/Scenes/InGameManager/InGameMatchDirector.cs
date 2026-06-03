@@ -3,241 +3,295 @@ using System.Collections.Generic;
 
 public class InGameMatchDirector : MonoBehaviour
 {
-    [Header("--- [JMS 팀] 프리팹 데이터 (블루/블랙 계열) ---")]
-    public List<GameObject> jmsPlayerPrefabs; 
-    public GameObject jmsGKPrefab;             
+    public static InGameMatchDirector Instance { get; private set; }
 
-    [Header("--- [KBC 팀] 프리팹 데이터 (레드 계열) ---")]
-    public List<GameObject> kbcPlayerPrefabs;  
-    public GameObject kbcGKPrefab;              
+    [Header("--- 팀별 선수 프리팹 리스트 ---")]
+    public List<GameObject> homePlayerPrefabs = new List<GameObject>();
+    public List<GameObject> awayPlayerPrefabs = new List<GameObject>();
 
-    [Header("--- 포메이션 위치 (부모 오브젝트) ---")]
-    public Transform homeFormationParent; 
-    public Transform awayFormationParent; 
+    [Header("--- 턴제 선택 시퀀스 UI 마스터 그룹 ---")]
+    public GameObject actionUIGroup; 
 
-    [Header("--- 상점 스킨 동기화용 리스트 ---")]
-    public List<Material> bootsMaterials;
-    public List<Color> hairColors;
+    [Header("--- 구역별 세부 UI 패널 ---")]
+    public GameObject panelArea1and2;
+    public GameObject panelArea3and4;
+    public GameObject panelArea5;
 
-    [Header("--- 한글 폰트 설정 (TextMeshPro용) ---")]
-    // ⚠️ 인스펙터 창에서 한글을 지원하는 TMP Font Asset을 반드시 넣어주세요! (예: 창모, 나눔고딕 등)
-    public TMPro.TMP_FontAsset koreanFont;
+    [Header("--- 🎥 카메라 오브젝트 연동 ---")]
+    public GameObject camBroadCast;
+    public GameObject camCloseUp;
 
-    private List<GameObject> homeFinalPrefabs;
-    private GameObject homeFinalGK;
-    private List<GameObject> awayFinalPrefabs;
-    private GameObject awayFinalGK;
+    [Header("--- ⚽ 경기장 아웃 라인 제한 반경 ---")]
+    public float fieldHalfLengthX = 150f;
+    public float fieldHalfWidthZ = 100f;
+
+    private GameObject currentPossessor = null; 
+    private List<InGamePlayerAI> allPlayersInGame = new List<InGamePlayerAI>();
+    private Transform ballTransform;
+    private bool isBallOutOfBounds = false;
+    
+    // 버그 방지를 위해 항상 대문자로 통일하여 관리합니다. (RED 또는 BLUE)
+    private string userTeamColor = "BLUE"; 
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
 
     void Start()
     {
-        SetTeamsBySelection();
-        SpawnAllUniquePlayers();
+        CloseAllSequencePanels();
+        
+        if (camBroadCast != null) camBroadCast.SetActive(true);
+        if (camCloseUp != null) camCloseUp.SetActive(false);
+
+        GameObject ball = GameObject.FindWithTag("Ball");
+        if(ball != null) ballTransform = ball.transform;
+
+        AssignTeamsAndSpawnPlayers();
     }
 
-    void SetTeamsBySelection()
+    void Update()
     {
-        if (GameDataManager.Instance == null)
+        if (Time.timeScale == 0f || ballTransform == null) return;
+
+        CheckBallBounds();
+
+        if (!isBallOutOfBounds) SetClosestPlayersToChaseBall();
+        else ResetChasingFlags();
+    }
+
+    void CheckBallBounds()
+    {
+        Vector3 ballPos = ballTransform.position;
+        if (Mathf.Abs(ballPos.x) > fieldHalfLengthX || Mathf.Abs(ballPos.z) > fieldHalfWidthZ)
         {
-            homeFinalPrefabs = jmsPlayerPrefabs;
-            homeFinalGK = jmsGKPrefab;
-            awayFinalPrefabs = kbcPlayerPrefabs;
-            awayFinalGK = kbcGKPrefab;
+            if (!isBallOutOfBounds)
+            {
+                isBallOutOfBounds = true;
+                Debug.LogWarning("⚽ 공이 아웃라인을 벗어났습니다. 추적을 중지합니다.");
+            }
+        }
+        else
+        {
+            isBallOutOfBounds = false;
+        }
+    }
+
+    void AssignTeamsAndSpawnPlayers()
+    {
+        GameObject homeObj = GameObject.Find("Home_Formation");
+        GameObject awayObj = GameObject.Find("Away_Formation");
+
+        string rawTeamData = "JMS";
+        if (GameDataManager.Instance != null && GameDataManager.Instance.selectedTeam != TeamType.None)
+        {
+            rawTeamData = GameDataManager.Instance.selectedTeam.ToString().ToUpper().Trim();
+        }
+
+        bool isHomeOurTeam = false;
+        bool isAwayOurTeam = false;
+
+        // 💡 [버그 수정] 대문자로 완벽히 변환하여 어떤 문자열이 들어와도 오작동하지 않게 고정
+        if (rawTeamData.Contains("JMS") || rawTeamData.Contains("JMS"))
+        {
+            isHomeOurTeam = true;
+            userTeamColor = "JMS";
+            Debug.Log("★ 아군 설정 확정: Home_Formation (BLUE)");
+        }
+        else if (rawTeamData.Contains("KBC") || rawTeamData.Contains("KBC"))
+        {
+            isAwayOurTeam = true;
+            userTeamColor = "KBC";
+            Debug.Log("★ 아군 설정 확정: Away_Formation (RED)");
+        }
+        else
+        {
+            // 예외 상황 시 기본값 배정
+            isHomeOurTeam = true; 
+            userTeamColor = "JMS";
+            Debug.LogWarning($"⚠️ 팀 판별 애매함 ({rawTeamData}). 기본 BLUE 팀으로 대체합니다.");
+        }
+
+        if (homeObj != null) SpawnPlayersAtFormation(homeObj.transform, isHomeOurTeam, homePlayerPrefabs, "player");
+        if (awayObj != null) SpawnPlayersAtFormation(awayObj.transform, isAwayOurTeam, awayPlayerPrefabs, "Rplayer");
+    }
+
+    void SpawnPlayersAtFormation(Transform formationParent, bool isOurTeam, List<GameObject> prefabList, string namePrefix)
+    {
+        for (int i = 0; i < formationParent.childCount; i++)
+        {
+            Transform posTransform = formationParent.GetChild(i);
+            if (posTransform == null || i >= prefabList.Count || prefabList[i] == null) continue;
+
+            GameObject newPlayerObj = Instantiate(prefabList[i], posTransform.position, posTransform.rotation);
+            newPlayerObj.transform.SetParent(posTransform);
+            newPlayerObj.name = $"{namePrefix} ({i + 1})";
+
+            InGamePlayerAI playerAI = newPlayerObj.GetComponent<InGamePlayerAI>();
+            if (playerAI != null)
+            {
+                playerAI.isOurTeam = isOurTeam; 
+                allPlayersInGame.Add(playerAI);
+            }
+        }
+    }
+
+    void SetClosestPlayersToChaseBall()
+    {
+        if (allPlayersInGame.Count == 0 || ballTransform == null) return;
+
+        InGamePlayerAI closestOurTeam = null;
+        InGamePlayerAI closestEnemyTeam = null;
+        float minOurDistance = float.MaxValue;
+        float minEnemyDistance = float.MaxValue;
+
+        foreach (InGamePlayerAI player in allPlayersInGame)
+        {
+            if (player == null) continue;
+            player.isChasingBall = false;
+
+            float distance = Vector3.Distance(player.transform.position, ballTransform.position);
+            if (player.isOurTeam)
+            {
+                if (distance < minOurDistance) { minOurDistance = distance; closestOurTeam = player; }
+            }
+            else
+            {
+                if (distance < minEnemyDistance) { minEnemyDistance = distance; closestEnemyTeam = player; }
+            }
+        }
+
+        if (closestOurTeam != null) closestOurTeam.isChasingBall = true;
+        if (closestEnemyTeam != null) closestEnemyTeam.isChasingBall = true;
+    }
+
+    public void ResetChasingFlags()
+    {
+        foreach (InGamePlayerAI player in allPlayersInGame)
+        {
+            if (player != null) player.isChasingBall = false;
+        }
+    }
+
+    private void CloseAllSequencePanels()
+    {
+        if (actionUIGroup != null) actionUIGroup.SetActive(false);
+        if (panelArea1and2 != null) panelArea1and2.SetActive(false);
+        if (panelArea3and4 != null) panelArea3and4.SetActive(false);
+        if (panelArea5 != null) panelArea5.SetActive(false);
+    }
+
+    public void TriggerSelectSequence(GameObject player, bool isAirBall = false)
+    {
+        currentPossessor = player;
+        Time.timeScale = 0f; 
+
+        CloseAllSequencePanels();
+
+        if (camBroadCast != null) camBroadCast.SetActive(false);
+        if (camCloseUp != null) 
+        {
+            camCloseUp.SetActive(true);
+            camCloseUp.transform.position = player.transform.position + player.transform.forward * 4f + Vector3.up * 2.5f;
+            camCloseUp.transform.LookAt(player.transform.position + Vector3.up * 1.2f);
+        }
+
+        if (actionUIGroup != null) actionUIGroup.SetActive(true);
+
+        if (isAirBall)
+        {
+            if (panelArea5 != null) panelArea5.SetActive(true);
             return;
         }
 
-        if (GameDataManager.Instance.selectedTeam == TeamType.KBC) 
+        Vector3 playerPos = player.transform.position;
+        float halfFieldX = 0f;
+        float penaltyAreaSideZ = 15f;
+
+        if (playerPos.x < halfFieldX)
         {
-            homeFinalPrefabs = kbcPlayerPrefabs;
-            homeFinalGK = kbcGKPrefab;
-            awayFinalPrefabs = jmsPlayerPrefabs;
-            awayFinalGK = jmsGKPrefab;
+            if (panelArea1and2 != null) panelArea1and2.SetActive(true);
         }
-        else 
+        else
         {
-            homeFinalPrefabs = jmsPlayerPrefabs;
-            homeFinalGK = jmsGKPrefab;
-            awayFinalPrefabs = kbcPlayerPrefabs;
-            awayFinalGK = kbcGKPrefab;
-        }
-    }
-
-    void SpawnAllUniquePlayers()
-    {
-        if (GameDataManager.Instance == null) return;
-
-        int myUserNumber = GameDataManager.Instance.selectedPlayerNumber; 
-
-        // 🔵 1. 홈팀 (유저 팀) 11명 배치
-        Transform[] homePositions = homeFormationParent.GetComponentsInChildren<Transform>();
-        for (int i = 1; i <= 11; i++)
-        {
-            if (i > homePositions.Length - 1) break;
-
-            GameObject spawnedPlayer = null;
-
-            if (i == 1)
+            if (Mathf.Abs(playerPos.z) > penaltyAreaSideZ)
             {
-                spawnedPlayer = Instantiate(homeFinalGK, homePositions[i].position, homePositions[i].rotation);
+                if (panelArea3and4 != null) panelArea3and4.SetActive(true);
             }
             else
             {
-                int prefabIndex = i - 2; 
-                if (prefabIndex < homeFinalPrefabs.Count && homeFinalPrefabs[prefabIndex] != null)
-                {
-                    spawnedPlayer = Instantiate(homeFinalPrefabs[prefabIndex], homePositions[i].position, homePositions[i].rotation);
-                    
-                    int currentPlayerNum = prefabIndex + 1; 
-                    if (currentPlayerNum == myUserNumber)
-                    {
-                        spawnedPlayer.tag = "Player"; 
-                        ApplyCustomSkin(spawnedPlayer); 
-                    }
-                }
-            }
-
-            // 🔄 [방향 정정] 홈팀(왼쪽 진영)이 자기 골대를 보고 있었다면 방향을 반대(왼쪽)로 꺾어줍니다!
-            if (spawnedPlayer != null)
-            {
-                spawnedPlayer.transform.forward = Vector3.left;
+                if (panelArea1and2 != null) panelArea1and2.SetActive(true);
             }
         }
+    }
 
-        // 🔴 2. 어웨이팀 (상대 AI 팀) 11명 배치
-        Transform[] awayPositions = awayFormationParent.GetComponentsInChildren<Transform>();
-        for (int i = 1; i <= 11; i++)
+    // 💡 [방향 연산] 대문자 매칭 구조로 완벽 안전 세팅
+    public Vector3 GetTargetDirection(GameObject kicker, string targetType)
+    {
+        if (targetType == "Shoot" || targetType == "Cross")
         {
-            if (i > awayPositions.Length - 1) break;
+            Vector3 enemyGoalPos = Vector3.zero;
 
-            GameObject spawnedAway = null;
-
-            if (i == 1)
+            // 대문자로 안전하게 체크합니다.
+            if (userTeamColor == "BLUE")
             {
-                spawnedAway = Instantiate(awayFinalGK, awayPositions[i].position, awayPositions[i].rotation);
+                enemyGoalPos = new Vector3(145f, 0f, 0f); 
             }
             else
             {
-                int prefabIndex = i - 2;
-                if (prefabIndex < awayFinalPrefabs.Count && awayFinalPrefabs[prefabIndex] != null)
+                enemyGoalPos = new Vector3(-145f, 0f, 0f);
+            }
+
+            Vector3 shootDir = (enemyGoalPos - kicker.transform.position);
+            shootDir.y = 0f;
+            return shootDir.normalized;
+        }
+
+        if (targetType == "Pass")
+        {
+            InGamePlayerAI closestTeammate = null;
+            float minDistance = float.MaxValue;
+
+            foreach (InGamePlayerAI player in allPlayersInGame)
+            {
+                if (player == null || player.gameObject == kicker || !player.isOurTeam) continue;
+
+                float dist = Vector3.Distance(kicker.transform.position, player.transform.position);
+                if (dist < minDistance)
                 {
-                    spawnedAway = Instantiate(awayFinalPrefabs[prefabIndex], awayPositions[i].position, awayPositions[i].rotation);
+                    minDistance = dist;
+                    closestTeammate = player;
                 }
             }
 
-            // 🔄 [방향 정정] 어웨이팀(오른쪽 진영) 역시 반대(오른쪽)를 바라보게 정렬합니다!
-            if (spawnedAway != null)
+            if (closestTeammate != null)
             {
-                spawnedAway.transform.forward = Vector3.right;
+                Vector3 passDir = (closestTeammate.transform.position - kicker.transform.position);
+                passDir.y = 0f;
+                return passDir.normalized;
             }
         }
+
+        return kicker.transform.forward;
     }
 
-    // 🎨 내 선수에게 피부색, 머리색, 축구화 마테리얼을 확실하게 주입하는 함수
-    void ApplyCustomSkin(GameObject playerObj)
+    public void OnClickNormalPass() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecutePass(); }
+    public void OnClickNormalShoot() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecuteShoot(); }
+    public void OnClickDribble() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecuteDribble(); }
+    public void OnClickCross() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecuteCross(); }
+    public void OnClickShedding() { ResumeGame(); }
+    public void OnClickHeadingPass() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecuteHeadingPass(); }
+    public void OnClickHeadingShoot() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecuteHeadingShoot(); }
+
+    private void ResumeGame()
     {
-        int bootsID = GameDataManager.Instance.currentEquippedBoots;
-        int hairID = GameDataManager.Instance.currentEquippedHair;
+        Time.timeScale = 1f;
+        CloseAllSequencePanels();
+        isBallOutOfBounds = false;
 
-        Renderer[] allRenderers = playerObj.GetComponentsInChildren<Renderer>(true);
-        
-        foreach (Renderer renderer in allRenderers)
-        {
-            if (renderer == null) continue;
-
-            string meshNameLower = renderer.gameObject.name.ToLower();
-
-            // 👟 1. 축구화 메쉬 처리
-            if (meshNameLower.Contains("shoes") || meshNameLower.Contains("boot"))
-            {
-                if (renderer is SkinnedMeshRenderer skinnedRenderer && bootsMaterials.Count > 0)
-                {
-                    int matIndex = bootsID - 1;
-                    if (matIndex >= 0 && matIndex < bootsMaterials.Count && bootsMaterials[matIndex] != null)
-                    {
-                        skinnedRenderer.material = bootsMaterials[matIndex];
-                    }
-                }
-                continue; 
-            }
-
-            // 💇 2. 머리카락 메쉬 처리
-            if (meshNameLower.Contains("hair"))
-            {
-                if (hairColors.Count > 0 && hairID > 0)
-                {
-                    int colorIndex = hairID - 1;
-                    if (colorIndex >= 0 && colorIndex < hairColors.Count)
-                    {
-                        renderer.material.color = hairColors[colorIndex];
-                    }
-                }
-                else
-                {
-                    renderer.material.color = GameDataManager.Instance.selectedHairColor;
-                }
-                continue; 
-            }
-
-            // 👤 3. [Ch38_Body 멀티 마테리얼 정밀 타격 로직]
-            // 발견하신 'Ch38_Body' 메쉬를 타겟팅합니다.
-            if (meshNameLower.Contains("ch38_body") || meshNameLower == "body")
-            {
-                // 메쉬가 가진 마테리얼 배열을 가져옵니다 (보통 피부, 유니폼 등이 슬롯별로 나뉘어 있음)
-                Material[] sharedMats = renderer.materials;
-
-                for (int m = 0; m < sharedMats.Length; m++)
-                {
-                    if (sharedMats[m] == null) continue;
-
-                    string matNameLower = sharedMats[m].name.ToLower();
-
-                    // 🎯 마테리얼 이름 중에 옷(cloth, tops, bottoms, uniform)과 관련된 마테리얼 슬롯은 철저히 패스!
-                    if (matNameLower.Contains("cloth") || matNameLower.Contains("top") || 
-                        matNameLower.Contains("bottom") || matNameLower.Contains("suit") || 
-                        matNameLower.Contains("uniform") || matNameLower.Contains("jersey"))
-                    {
-                        continue; 
-                    }
-
-                    // 🎯 옷이 아닌 슬롯(피부 슬롯)만 골라내어 텍스처를 밀고 유저 피부색 주입!
-                    if (sharedMats[m].HasProperty("_MainTex"))
-                    {
-                        sharedMats[m].mainTexture = null;
-                    }
-                    sharedMats[m].color = GameDataManager.Instance.selectedSkinColor;
-                }
-
-                // 변경된 마테리얼 배열을 렌더러에 다시 덮어씌워 적용합니다.
-                renderer.materials = sharedMats;
-            }
-        }
-
-        // 이름표 생성
-        CreateNameTag(playerObj);
-    }
-
-    void CreateNameTag(GameObject playerObj)
-    {
-        GameObject nameTagObj = new GameObject("PlayerNameTag");
-        nameTagObj.transform.SetParent(playerObj.transform);
-        nameTagObj.transform.localPosition = new Vector3(0, 2.4f, 0); 
-        
-        TMPro.TextMeshPro textMesh = nameTagObj.AddComponent<TMPro.TextMeshPro>();
-        
-        // 🎯 인스펙터 창에서 유저님이 할당해 줄 한글 폰트를 깔끔하게 적용합니다.
-        if (koreanFont != null)
-        {
-            textMesh.font = koreanFont;
-        }
-
-        string finalName = "손흥민";
-        if (GameDataManager.Instance != null && !string.IsNullOrEmpty(GameDataManager.Instance.playerCustomName))
-        {
-            finalName = GameDataManager.Instance.playerCustomName;
-        }
-
-        textMesh.text = $"<color=yellow>★</color> {finalName}";
-        textMesh.fontSize = 5; 
-        textMesh.alignment = TMPro.TextAlignmentOptions.Center; 
-        nameTagObj.AddComponent<LookAtCamera>();
+        if (camBroadCast != null) camBroadCast.SetActive(true);
+        if (camCloseUp != null) camCloseUp.SetActive(false);
     }
 }

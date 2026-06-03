@@ -53,6 +53,7 @@
     <Compile Include="Assets/Scenes/MatchScene/MatchDirector.cs" />
     <Compile Include="Assets/Scenes/Main_Menu_Scene/Story.cs" />
     <Compile Include="Assets/Scenes/Red_Lobby/InventoryManager.cs" />
+    <Compile Include="Assets/Scenes/InGameManager/InGameBall.cs" />
     <Compile Include="Assets/Scenes/Red_Lobby/UpgradeManager.cs" />
     <Compile Include="Assets/Scenes/Main_Menu_Scene/GamemenuDirector.cs" />
     <Compile Include="Assets/TutorialInfo/Scripts/Readme.cs" />
@@ -65,6 +66,8 @@
     <Compile Include="Assets/BallKick.cs" />
     <Compile Include="Assets/Scenes/Shop/ShopManager.cs" />
     <Compile Include="Assets/Scenes/Customizing_Folder/RotatePreview.cs" />
+    <Compile Include="Assets/Scenes/InGameManager/InCameraController.cs" />
+    <Compile Include="Assets/Prefab_player/InGamePlayerAI.cs" />
     <Compile Include="Assets/Scenes/Customizing_Folder/CustomizingManger.cs" />
     <Compile Include="Assets/ChoosingUI/ChoiceManager.cs" />
   </ItemGroup>
@@ -1195,6 +1198,10 @@
       <HintPath>Library/ScriptAssemblies/Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.Splines.Editor">
+      <HintPath>Library/ScriptAssemblies/Unity.Splines.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.2D.Editor.Overrides">
       <HintPath>Library/ScriptAssemblies/Unity.RenderPipelines.Universal.2D.Editor.Overrides.dll</HintPath>
       <Private>False</Private>
@@ -1251,8 +1258,16 @@
       <HintPath>Library/ScriptAssemblies/Unity.Mathematics.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.Cinemachine.Editor">
+      <HintPath>Library/ScriptAssemblies/Unity.Cinemachine.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.UnifiedRayTracing.Runtime">
       <HintPath>Library/ScriptAssemblies/Unity.UnifiedRayTracing.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Cinemachine">
+      <HintPath>Library/ScriptAssemblies/Unity.Cinemachine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
@@ -1389,6 +1404,10 @@
     </Reference>
     <Reference Include="Unity.Settings.Editor">
       <HintPath>Library/ScriptAssemblies/Unity.Settings.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Splines">
+      <HintPath>Library/ScriptAssemblies/Unity.Splines.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEditor.UI">

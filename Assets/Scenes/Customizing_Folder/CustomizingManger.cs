@@ -53,6 +53,22 @@ public class CustomizingManager : MonoBehaviour
         }
 
         UpdatePreviewCharacter(0);
+        if (nameInput != null)
+        {   
+        // 유저가 자판을 한 글자씩 누를 때마다 실시간으로 감지합니다.
+        nameInput.onValueChanged.AddListener((text) => {
+            
+            // 1. 눈에 보이지 않으면서 네모 박스를 유발하는 모든 특수 유령 문자(\u200B, \u0000 등)를 정규식으로 지워버립니다.
+            string cleaned = System.Text.RegularExpressions.Regex.Replace(text, @"[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s★]", "");
+            
+            // 2. 만약 찌꺼기 문자가 발견되어 텍스트가 가공되었다면 강제로 인풋필드 글자를 정화된 글자로 덮어씌웁니다.
+            if (text != cleaned)
+            {
+                nameInput.text = cleaned;
+                nameInput.caretPosition = cleaned.Length; // 커서가 맨 앞으로 튀는 현상 방지
+            }
+        });
+        }
     }
 
     // 캐릭터(팀) 버튼을 누를 때 인덱스 갱신
@@ -146,12 +162,18 @@ public class CustomizingManager : MonoBehaviour
         // 2. 입력된 커스텀 이름 전송
         if (nameInput != null && !string.IsNullOrEmpty(nameInput.text))
         {
-            GameDataManager.Instance.playerCustomName = nameInput.text;
+            string cleanedName = nameInput.text.Trim();
+
+        // 2. 눈에 안 보이는 유령 제어 문자들(\u200B, \u0000 등)을 완벽하게 필터링해서 지워버립니다.
+        cleanedName = System.Text.RegularExpressions.Regex.Replace(cleanedName, @"[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s★]", "");
+
+        // 3. 깨끗해진 알맹이 이름만 저장!
+        GameDataManager.Instance.playerCustomName = cleanedName;
         }
 
         // 3. 인게임에서 내가 조종할 고유 등번호 연동 지정
         // selectedCharacterIndex가 0(JMS)이면 7번 프리팹을 유저로, 1(KBC)이면 10번 프리팹을 유저로 인식시킵니다.
-        GameDataManager.Instance.selectedPlayerNumber = (selectedCharacterIndex == 0) ? 7 : 10;
+        GameDataManager.Instance.selectedPlayerNumber = (selectedCharacterIndex == 0) ? 6 : 6;
 
         // 4. 캐릭터 생성 완료 플래그 도장 찍기
         GameDataManager.Instance.isCharacterCreated = true;
