@@ -19,6 +19,14 @@ public class InGamePlayerAI : MonoBehaviour
 
     private bool isCollisionCooldown = false;
 
+    [Header("전술 이동")]
+    public bool useTacticalMove = true;
+    public float tacticalMoveSpeed = 7f;
+
+    private Vector3 tacticalTargetPos;
+    private Quaternion tacticalTargetRot;
+    private bool hasTacticalTarget = false;
+
     private void Start()
     {
         anim = GetComponent<Animator>();
@@ -51,21 +59,65 @@ public class InGamePlayerAI : MonoBehaviour
         }
     }
 
+    public void SetTacticalMoveTarget(Vector3 pos, Quaternion rot)
+    {
+        tacticalTargetPos = pos;
+        tacticalTargetRot = rot;
+        hasTacticalTarget = true;
+    }
+
     private void FixedUpdate()
     {
-        if (Time.timeScale == 0f || ballTransform == null)
+        if (Time.timeScale == 0f)
         {
             StopMove();
             return;
         }
 
-        if (isChasingBall)
+        if (useTacticalMove && hasTacticalTarget)
         {
-            MoveToBall();
+            Vector3 dir = tacticalTargetPos - transform.position;
+            dir.y = 0f;
+
+            if (dir.magnitude > 0.15f)
+            {
+                if (playerRb != null)
+                    playerRb.linearVelocity = dir.normalized * tacticalMoveSpeed;
+
+                if (dir.sqrMagnitude > 0.01f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(dir);
+                    transform.rotation = Quaternion.Slerp(
+                        transform.rotation,
+                        targetRot,
+                        Time.fixedDeltaTime * 8f
+                    );
+                }
+
+                if (anim != null)
+                    anim.SetFloat("Speed", tacticalMoveSpeed);
+            }
+            else
+            {
+                if (playerRb != null)
+                    playerRb.linearVelocity = Vector3.zero;
+
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    tacticalTargetRot,
+                    Time.fixedDeltaTime * 8f
+                );
+
+                if (anim != null)
+                    anim.SetFloat("Speed", 0f);
+
+                hasTacticalTarget = false;
+            }
+
             return;
         }
 
-        KeepFormation();
+        StopMove();
     }
 
     private void MoveToBall()
@@ -277,7 +329,7 @@ public class InGamePlayerAI : MonoBehaviour
         ballRb.linearVelocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
 
-        ballRb.AddForce(targetDirection * power + Vector3.up * upForce, ForceMode.Impulse);
+        //ballRb.AddForce(targetDirection * power + Vector3.up * upForce, ForceMode.Impulse);
 
         if (InGameMatchDirector.Instance != null)
             InGameMatchDirector.Instance.ResetChasingFlags();
@@ -292,7 +344,7 @@ public class InGamePlayerAI : MonoBehaviour
         ballRb.linearVelocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
 
-        ballRb.AddForce(transform.forward * 6.5f + Vector3.up * 0.5f, ForceMode.Impulse);
+        //ballRb.AddForce(transform.forward * 6.5f + Vector3.up * 0.5f, ForceMode.Impulse);
 
         if (InGameMatchDirector.Instance != null)
             InGameMatchDirector.Instance.ResetChasingFlags();
@@ -325,7 +377,7 @@ public class InGamePlayerAI : MonoBehaviour
         ballRb.linearVelocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
 
-        ballRb.AddForce(targetDirection * power + Vector3.up * upForce, ForceMode.Impulse);
+        //ballRb.AddForce(targetDirection * power + Vector3.up * upForce, ForceMode.Impulse);
 
         if (InGameMatchDirector.Instance != null)
             InGameMatchDirector.Instance.ResetChasingFlags();
