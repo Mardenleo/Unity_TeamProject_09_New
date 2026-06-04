@@ -5,293 +5,618 @@ public class InGameMatchDirector : MonoBehaviour
 {
     public static InGameMatchDirector Instance { get; private set; }
 
-    [Header("--- 팀별 선수 프리팹 리스트 ---")]
+    [Header("팀별 선수 프리팹")]
     public List<GameObject> homePlayerPrefabs = new List<GameObject>();
     public List<GameObject> awayPlayerPrefabs = new List<GameObject>();
 
-    [Header("--- 턴제 선택 시퀀스 UI 마스터 그룹 ---")]
-    public GameObject actionUIGroup; 
-
-    [Header("--- 구역별 세부 UI 패널 ---")]
+    [Header("UI")]
+    public GameObject actionUIGroup;
     public GameObject panelArea1and2;
     public GameObject panelArea3and4;
     public GameObject panelArea5;
 
-    [Header("--- 🎥 카메라 오브젝트 연동 ---")]
-    public GameObject camBroadCast;
-    public GameObject camCloseUp;
+    [Header("Camera")]
+    public Camera mainGameCamera;
+    private Camera closeUpCamera;
 
-    [Header("--- ⚽ 경기장 아웃 라인 제한 반경 ---")]
-    public float fieldHalfLengthX = 150f;
-    public float fieldHalfWidthZ = 100f;
+    [Header("Blue Out Line Bounds")]
+    public float outMinX = -25f;
+    public float outMaxX = 95.6f;
+    public float outMinZ = -40f;
+    public float outMaxZ = 28f;
 
-    private GameObject currentPossessor = null; 
-    private List<InGamePlayerAI> allPlayersInGame = new List<InGamePlayerAI>();
+    [Header("Goal X")]
+    public float leftGoalX = -25.0f;
+    public float rightGoalX = 95.62f;
+
+    [Header("Out Wall")]
+    public bool useOutBounce = true;
+    public bool createOutWalls = true;
+    public bool showOutWalls = true;
+    public float wallHeight = 20f;
+    public float wallThickness = 2f;
+    public float outBouncePower = 18f;
+    public PhysicsMaterial ballBounceMaterial;
+
+    [Header("Sequence")]
+    public float sequenceCooldown = 1.2f;
+
+    private string userTeam = "JMS";
+    private float ourGoalX;
+    private float enemyGoalX;
+
+    private GameObject currentPossessor;
     private Transform ballTransform;
-    private bool isBallOutOfBounds = false;
-    
-    // 버그 방지를 위해 항상 대문자로 통일하여 관리합니다. (RED 또는 BLUE)
-    private string userTeamColor = "BLUE"; 
+    private Rigidbody ballRb;
 
-    void Awake()
+    private readonly List<InGamePlayerAI> allPlayersInGame = new List<InGamePlayerAI>();
+
+    private bool isSequencePlaying = false;
+    private float lastSequenceTime = -999f;
+
+    private float fieldCenterX;
+    private float fieldCenterZ;
+
+    private void Awake()
     {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        fieldCenterX = (outMinX + outMaxX) * 0.5f;
+        fieldCenterZ = (outMinZ + outMaxZ) * 0.5f;
     }
 
-    void Start()
+    private void Start()
     {
         CloseAllSequencePanels();
-        
-        if (camBroadCast != null) camBroadCast.SetActive(true);
-        if (camCloseUp != null) camCloseUp.SetActive(false);
 
+        if (mainGameCamera == null)
+            mainGameCamera = Camera.main;
+
+        CreateCloseUpCamera();
+        FindBall();
+        SetupUserTeamDirection();
+
+        if (createOutWalls)
+            CreateOutWalls();
+
+        SpawnAllPlayers();
+    }
+
+    private void FixedUpdate()
+    {
+        if (useOutBounce)
+            CheckBallOutAndBounce();
+    }
+
+    private void Update()
+    {
+        if (ballTransform == null) return;
+
+        if (!isSequencePlaying && Time.timeScale > 0f)
+            SetClosestPlayersToChaseBall();
+    }
+
+    private void FindBall()
+    {
         GameObject ball = GameObject.FindWithTag("Ball");
-        if(ball != null) ballTransform = ball.transform;
 
-        AssignTeamsAndSpawnPlayers();
-    }
-
-    void Update()
-    {
-        if (Time.timeScale == 0f || ballTransform == null) return;
-
-        CheckBallBounds();
-
-        if (!isBallOutOfBounds) SetClosestPlayersToChaseBall();
-        else ResetChasingFlags();
-    }
-
-    void CheckBallBounds()
-    {
-        Vector3 ballPos = ballTransform.position;
-        if (Mathf.Abs(ballPos.x) > fieldHalfLengthX || Mathf.Abs(ballPos.z) > fieldHalfWidthZ)
+        if (ball == null)
         {
-            if (!isBallOutOfBounds)
-            {
-                isBallOutOfBounds = true;
-                Debug.LogWarning("⚽ 공이 아웃라인을 벗어났습니다. 추적을 중지합니다.");
-            }
+            Debug.LogError("Ball 태그가 붙은 공을 찾지 못했습니다.");
+            return;
+        }
+
+        ballTransform = ball.transform;
+        ballRb = ball.GetComponent<Rigidbody>();
+
+        if (ballRb == null)
+            Debug.LogError("Ball에 Rigidbody가 없습니다.");
+    }
+
+    private void SetupUserTeamDirection()
+    {
+        userTeam = "JMS";
+
+        if (GameDataManager.Instance != null &&
+            GameDataManager.Instance.selectedTeam != TeamType.None)
+        {
+            userTeam = GameDataManager.Instance.selectedTeam.ToString().ToUpper().Trim();
+        }
+
+        if (userTeam.Contains("KBC"))
+        {
+            ourGoalX = leftGoalX;
+            enemyGoalX = rightGoalX;
+            Debug.Log("KBC 선택: 왼쪽 우리 골대 → 오른쪽 공격");
         }
         else
         {
-            isBallOutOfBounds = false;
+            ourGoalX = rightGoalX;
+            enemyGoalX = leftGoalX;
+            Debug.Log("JMS 선택: 오른쪽 우리 골대 → 왼쪽 공격");
         }
     }
 
-    void AssignTeamsAndSpawnPlayers()
+    private void SpawnAllPlayers()
     {
         GameObject homeObj = GameObject.Find("Home_Formation");
         GameObject awayObj = GameObject.Find("Away_Formation");
 
-        string rawTeamData = "JMS";
-        if (GameDataManager.Instance != null && GameDataManager.Instance.selectedTeam != TeamType.None)
-        {
-            rawTeamData = GameDataManager.Instance.selectedTeam.ToString().ToUpper().Trim();
-        }
+        bool homeIsOurTeam = userTeam.Contains("JMS");
+        bool awayIsOurTeam = userTeam.Contains("KBC");
 
-        bool isHomeOurTeam = false;
-        bool isAwayOurTeam = false;
+        if (homeObj != null)
+            SpawnPlayersAtFormation(homeObj.transform, homeIsOurTeam, homePlayerPrefabs, "player");
 
-        // 💡 [버그 수정] 대문자로 완벽히 변환하여 어떤 문자열이 들어와도 오작동하지 않게 고정
-        if (rawTeamData.Contains("JMS") || rawTeamData.Contains("JMS"))
-        {
-            isHomeOurTeam = true;
-            userTeamColor = "JMS";
-            Debug.Log("★ 아군 설정 확정: Home_Formation (BLUE)");
-        }
-        else if (rawTeamData.Contains("KBC") || rawTeamData.Contains("KBC"))
-        {
-            isAwayOurTeam = true;
-            userTeamColor = "KBC";
-            Debug.Log("★ 아군 설정 확정: Away_Formation (RED)");
-        }
-        else
-        {
-            // 예외 상황 시 기본값 배정
-            isHomeOurTeam = true; 
-            userTeamColor = "JMS";
-            Debug.LogWarning($"⚠️ 팀 판별 애매함 ({rawTeamData}). 기본 BLUE 팀으로 대체합니다.");
-        }
-
-        if (homeObj != null) SpawnPlayersAtFormation(homeObj.transform, isHomeOurTeam, homePlayerPrefabs, "player");
-        if (awayObj != null) SpawnPlayersAtFormation(awayObj.transform, isAwayOurTeam, awayPlayerPrefabs, "Rplayer");
+        if (awayObj != null)
+            SpawnPlayersAtFormation(awayObj.transform, awayIsOurTeam, awayPlayerPrefabs, "Rplayer");
     }
 
-    void SpawnPlayersAtFormation(Transform formationParent, bool isOurTeam, List<GameObject> prefabList, string namePrefix)
+    private void SpawnPlayersAtFormation(
+        Transform formationParent,
+        bool isOurTeam,
+        List<GameObject> prefabList,
+        string namePrefix)
     {
         for (int i = 0; i < formationParent.childCount; i++)
         {
-            Transform posTransform = formationParent.GetChild(i);
-            if (posTransform == null || i >= prefabList.Count || prefabList[i] == null) continue;
+            if (i >= prefabList.Count || prefabList[i] == null) continue;
 
-            GameObject newPlayerObj = Instantiate(prefabList[i], posTransform.position, posTransform.rotation);
-            newPlayerObj.transform.SetParent(posTransform);
-            newPlayerObj.name = $"{namePrefix} ({i + 1})";
+            Transform pos = formationParent.GetChild(i);
 
-            InGamePlayerAI playerAI = newPlayerObj.GetComponent<InGamePlayerAI>();
-            if (playerAI != null)
-            {
-                playerAI.isOurTeam = isOurTeam; 
-                allPlayersInGame.Add(playerAI);
-            }
+            GameObject obj = Instantiate(prefabList[i], pos.position, pos.rotation);
+            obj.transform.SetParent(pos);
+            obj.name = $"{namePrefix} ({i + 1})";
+
+            InGamePlayerAI ai = obj.GetComponent<InGamePlayerAI>();
+            if (ai == null) continue;
+
+            ai.isOurTeam = isOurTeam;
+            allPlayersInGame.Add(ai);
+
+            bool isMyHero =
+                isOurTeam &&
+                GameDataManager.Instance != null &&
+                i + 1 == GameDataManager.Instance.selectedPlayerNumber;
+
+            ai.InitStats(isMyHero);
         }
-    }
-
-    void SetClosestPlayersToChaseBall()
-    {
-        if (allPlayersInGame.Count == 0 || ballTransform == null) return;
-
-        InGamePlayerAI closestOurTeam = null;
-        InGamePlayerAI closestEnemyTeam = null;
-        float minOurDistance = float.MaxValue;
-        float minEnemyDistance = float.MaxValue;
-
-        foreach (InGamePlayerAI player in allPlayersInGame)
-        {
-            if (player == null) continue;
-            player.isChasingBall = false;
-
-            float distance = Vector3.Distance(player.transform.position, ballTransform.position);
-            if (player.isOurTeam)
-            {
-                if (distance < minOurDistance) { minOurDistance = distance; closestOurTeam = player; }
-            }
-            else
-            {
-                if (distance < minEnemyDistance) { minEnemyDistance = distance; closestEnemyTeam = player; }
-            }
-        }
-
-        if (closestOurTeam != null) closestOurTeam.isChasingBall = true;
-        if (closestEnemyTeam != null) closestEnemyTeam.isChasingBall = true;
-    }
-
-    public void ResetChasingFlags()
-    {
-        foreach (InGamePlayerAI player in allPlayersInGame)
-        {
-            if (player != null) player.isChasingBall = false;
-        }
-    }
-
-    private void CloseAllSequencePanels()
-    {
-        if (actionUIGroup != null) actionUIGroup.SetActive(false);
-        if (panelArea1and2 != null) panelArea1and2.SetActive(false);
-        if (panelArea3and4 != null) panelArea3and4.SetActive(false);
-        if (panelArea5 != null) panelArea5.SetActive(false);
     }
 
     public void TriggerSelectSequence(GameObject player, bool isAirBall = false)
     {
-        currentPossessor = player;
-        Time.timeScale = 0f; 
+        if (isSequencePlaying) return;
+        if (Time.unscaledTime - lastSequenceTime < sequenceCooldown) return;
+        if (player == null) return;
 
+        InGamePlayerAI ai = player.GetComponent<InGamePlayerAI>();
+        if (ai == null || !ai.isOurTeam) return;
+
+        currentPossessor = player;
+        isSequencePlaying = true;
+        lastSequenceTime = Time.unscaledTime;
+
+        Time.timeScale = 0f;
+
+        ResetChasingFlags();
         CloseAllSequencePanels();
 
-        if (camBroadCast != null) camBroadCast.SetActive(false);
-        if (camCloseUp != null) 
-        {
-            camCloseUp.SetActive(true);
-            camCloseUp.transform.position = player.transform.position + player.transform.forward * 4f + Vector3.up * 2.5f;
-            camCloseUp.transform.LookAt(player.transform.position + Vector3.up * 1.2f);
-        }
+        ShowCloseUp(player);
 
-        if (actionUIGroup != null) actionUIGroup.SetActive(true);
+        actionUIGroup?.SetActive(true);
 
-        if (isAirBall)
-        {
-            if (panelArea5 != null) panelArea5.SetActive(true);
-            return;
-        }
+        int area = GetAreaNumber(player.transform.position);
+        Debug.Log($"현재 구역: {area}");
 
-        Vector3 playerPos = player.transform.position;
-        float halfFieldX = 0f;
-        float penaltyAreaSideZ = 15f;
-
-        if (playerPos.x < halfFieldX)
-        {
-            if (panelArea1and2 != null) panelArea1and2.SetActive(true);
-        }
+        if (isAirBall || area == 5)
+            panelArea5?.SetActive(true);
+        else if (area == 3 || area == 4)
+            panelArea3and4?.SetActive(true);
         else
-        {
-            if (Mathf.Abs(playerPos.z) > penaltyAreaSideZ)
-            {
-                if (panelArea3and4 != null) panelArea3and4.SetActive(true);
-            }
-            else
-            {
-                if (panelArea1and2 != null) panelArea1and2.SetActive(true);
-            }
-        }
+            panelArea1and2?.SetActive(true);
     }
 
-    // 💡 [방향 연산] 대문자 매칭 구조로 완벽 안전 세팅
+    private int GetAreaNumber(Vector3 worldPos)
+    {
+        fieldCenterX = (outMinX + outMaxX) * 0.5f;
+        fieldCenterZ = (outMinZ + outMaxZ) * 0.5f;
+
+        if (Mathf.Abs(worldPos.x - fieldCenterX) < 15f)
+            return 1;
+
+        float totalAttackDistance = Mathf.Abs(enemyGoalX - ourGoalX);
+        float progressed = Mathf.Abs(worldPos.x - ourGoalX) / totalAttackDistance;
+
+        float topWingZ = fieldCenterZ + 23f;
+        float bottomWingZ = fieldCenterZ - 23f;
+
+        if (progressed < 0.55f)
+            return 1;
+
+        if (progressed < 0.82f)
+        {
+            if (worldPos.z > topWingZ) return 3;
+            if (worldPos.z < bottomWingZ) return 4;
+            return 2;
+        }
+
+        if (worldPos.z > topWingZ) return 3;
+        if (worldPos.z < bottomWingZ) return 4;
+
+        return 5;
+    }
+
     public Vector3 GetTargetDirection(GameObject kicker, string targetType)
     {
-        if (targetType == "Shoot" || targetType == "Cross")
+        fieldCenterZ = (outMinZ + outMaxZ) * 0.5f;
+
+        if (kicker == null)
+            return Vector3.forward;
+
+        if (targetType == "Shoot")
         {
-            Vector3 enemyGoalPos = Vector3.zero;
+            Vector3 target = new Vector3(enemyGoalX, 0f, fieldCenterZ + Random.Range(-5.5f, 5.5f));
+            return GetFlatDirection(kicker.transform.position, target);
+        }
 
-            // 대문자로 안전하게 체크합니다.
-            if (userTeamColor == "BLUE")
-            {
-                enemyGoalPos = new Vector3(145f, 0f, 0f); 
-            }
-            else
-            {
-                enemyGoalPos = new Vector3(-145f, 0f, 0f);
-            }
+        if (targetType == "Cross")
+        {
+            float boxX = enemyGoalX > ourGoalX ? enemyGoalX - 12f : enemyGoalX + 12f;
+            Vector3 target = new Vector3(boxX, 0f, fieldCenterZ + Random.Range(-8f, 8f));
 
-            Vector3 shootDir = (enemyGoalPos - kicker.transform.position);
-            shootDir.y = 0f;
-            return shootDir.normalized;
+            InGamePlayerAI best = FindBestOurTeammateNear(target, kicker);
+
+            if (best != null)
+                target = best.transform.position;
+
+            return GetFlatDirection(kicker.transform.position, target);
         }
 
         if (targetType == "Pass")
         {
-            InGamePlayerAI closestTeammate = null;
-            float minDistance = float.MaxValue;
+            InGamePlayerAI teammate = FindClosestOurTeammate(kicker);
 
-            foreach (InGamePlayerAI player in allPlayersInGame)
-            {
-                if (player == null || player.gameObject == kicker || !player.isOurTeam) continue;
-
-                float dist = Vector3.Distance(kicker.transform.position, player.transform.position);
-                if (dist < minDistance)
-                {
-                    minDistance = dist;
-                    closestTeammate = player;
-                }
-            }
-
-            if (closestTeammate != null)
-            {
-                Vector3 passDir = (closestTeammate.transform.position - kicker.transform.position);
-                passDir.y = 0f;
-                return passDir.normalized;
-            }
+            if (teammate != null)
+                return GetFlatDirection(kicker.transform.position, teammate.transform.position);
         }
 
         return kicker.transform.forward;
     }
 
-    public void OnClickNormalPass() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecutePass(); }
-    public void OnClickNormalShoot() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecuteShoot(); }
-    public void OnClickDribble() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecuteDribble(); }
-    public void OnClickCross() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecuteCross(); }
-    public void OnClickShedding() { ResumeGame(); }
-    public void OnClickHeadingPass() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecuteHeadingPass(); }
-    public void OnClickHeadingShoot() { ResumeGame(); if (currentPossessor != null) currentPossessor.GetComponent<InGamePlayerAI>()?.ExecuteHeadingShoot(); }
+    private Vector3 GetFlatDirection(Vector3 from, Vector3 to)
+    {
+        Vector3 dir = to - from;
+        dir.y = 0f;
+
+        if (dir.sqrMagnitude < 0.01f)
+            return Vector3.forward;
+
+        return dir.normalized;
+    }
+
+    private InGamePlayerAI FindClosestOurTeammate(GameObject kicker)
+    {
+        InGamePlayerAI closest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var p in allPlayersInGame)
+        {
+            if (p == null || p.gameObject == kicker || !p.isOurTeam) continue;
+
+            float dist = Vector3.Distance(kicker.transform.position, p.transform.position);
+
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closest = p;
+            }
+        }
+
+        return closest;
+    }
+
+    private InGamePlayerAI FindBestOurTeammateNear(Vector3 targetPos, GameObject kicker)
+    {
+        InGamePlayerAI best = null;
+        float minDist = float.MaxValue;
+
+        foreach (var p in allPlayersInGame)
+        {
+            if (p == null || p.gameObject == kicker || !p.isOurTeam) continue;
+
+            float dist = Vector3.Distance(p.transform.position, targetPos);
+
+            if (dist < minDist)
+            {
+                minDist = dist;
+                best = p;
+            }
+        }
+
+        return best;
+    }
+
+    private void CreateCloseUpCamera()
+    {
+        GameObject oldCam = GameObject.Find("Runtime_CloseUp_Camera");
+
+        if (oldCam != null)
+            Destroy(oldCam);
+
+        GameObject camObj = new GameObject("Runtime_CloseUp_Camera");
+        closeUpCamera = camObj.AddComponent<Camera>();
+
+        if (mainGameCamera != null)
+            closeUpCamera.CopyFrom(mainGameCamera);
+
+        closeUpCamera.enabled = false;
+        closeUpCamera.depth = 100;
+    }
+
+    private void ShowCloseUp(GameObject player)
+    {
+        if (closeUpCamera == null)
+            CreateCloseUpCamera();
+
+        if (mainGameCamera != null)
+            mainGameCamera.enabled = false;
+
+        Vector3 camPos =
+            player.transform.position
+            - player.transform.forward * 4.5f
+            + Vector3.up * 2.8f;
+
+        closeUpCamera.transform.position = camPos;
+        closeUpCamera.transform.LookAt(player.transform.position + Vector3.up * 1.3f);
+        closeUpCamera.fieldOfView = 28f;
+        closeUpCamera.enabled = true;
+
+        Debug.Log("클로즈업 전용 카메라 ON");
+    }
 
     private void ResumeGame()
     {
         Time.timeScale = 1f;
-        CloseAllSequencePanels();
-        isBallOutOfBounds = false;
 
-        if (camBroadCast != null) camBroadCast.SetActive(true);
-        if (camCloseUp != null) camCloseUp.SetActive(false);
+        isSequencePlaying = false;
+        lastSequenceTime = Time.unscaledTime;
+
+        ResetChasingFlags();
+        CloseAllSequencePanels();
+
+        if (closeUpCamera != null)
+            closeUpCamera.enabled = false;
+
+        if (mainGameCamera != null)
+            mainGameCamera.enabled = true;
+    }
+
+    private void CheckBallOutAndBounce()
+    {
+        if (ballTransform == null || ballRb == null) return;
+
+        Vector3 pos = ballTransform.position;
+        Vector3 vel = ballRb.linearVelocity;
+
+        bool bounced = false;
+
+        if (pos.x < outMinX)
+        {
+            pos.x = outMinX + 1f;
+            vel.x = Mathf.Abs(vel.x) + outBouncePower;
+            bounced = true;
+        }
+        else if (pos.x > outMaxX)
+        {
+            pos.x = outMaxX - 1f;
+            vel.x = -Mathf.Abs(vel.x) - outBouncePower;
+            bounced = true;
+        }
+
+        if (pos.z < outMinZ)
+        {
+            pos.z = outMinZ + 1f;
+            vel.z = Mathf.Abs(vel.z) + outBouncePower;
+            bounced = true;
+        }
+        else if (pos.z > outMaxZ)
+        {
+            pos.z = outMaxZ - 1f;
+            vel.z = -Mathf.Abs(vel.z) - outBouncePower;
+            bounced = true;
+        }
+
+        if (bounced)
+        {
+            ballTransform.position = pos;
+            ballRb.linearVelocity = vel;
+            ballRb.angularVelocity = Vector3.zero;
+
+            ResetChasingFlags();
+
+            Debug.Log("공이 파란 아웃라인 밖으로 나감 → 안쪽으로 반사");
+        }
+    }
+
+    private void CreateOutWalls()
+    {
+        GameObject oldGroup = GameObject.Find("OutWall_Group");
+
+        if (oldGroup != null)
+            Destroy(oldGroup);
+
+        GameObject parent = new GameObject("OutWall_Group");
+        parent.transform.SetParent(transform);
+
+        float centerX = (outMinX + outMaxX) * 0.5f;
+        float centerZ = (outMinZ + outMaxZ) * 0.5f;
+
+        float lengthX = Mathf.Abs(outMaxX - outMinX);
+        float lengthZ = Mathf.Abs(outMaxZ - outMinZ);
+
+        CreateWall(
+            parent.transform,
+            "OutWall_Right",
+            new Vector3(outMaxX, wallHeight * 0.5f, centerZ),
+            new Vector3(wallThickness, wallHeight, lengthZ)
+        );
+
+        CreateWall(
+            parent.transform,
+            "OutWall_Left",
+            new Vector3(outMinX, wallHeight * 0.5f, centerZ),
+            new Vector3(wallThickness, wallHeight, lengthZ)
+        );
+
+        CreateWall(
+            parent.transform,
+            "OutWall_Top",
+            new Vector3(centerX, wallHeight * 0.5f, outMaxZ),
+            new Vector3(lengthX, wallHeight, wallThickness)
+        );
+
+        CreateWall(
+            parent.transform,
+            "OutWall_Bottom",
+            new Vector3(centerX, wallHeight * 0.5f, outMinZ),
+            new Vector3(lengthX, wallHeight, wallThickness)
+        );
+
+        Debug.Log($"파란 아웃라인 벽 생성 완료 X:{outMinX}~{outMaxX}, Z:{outMinZ}~{outMaxZ}");
+    }
+
+    private void CreateWall(Transform parent, string wallName, Vector3 position, Vector3 scale)
+    {
+        GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+        wall.name = wallName;
+        wall.transform.SetParent(parent);
+        wall.transform.position = position;
+        wall.transform.localScale = scale;
+
+        Collider col = wall.GetComponent<Collider>();
+        col.isTrigger = false;
+
+        if (ballBounceMaterial != null)
+            col.sharedMaterial = ballBounceMaterial;
+
+        Rigidbody rb = wall.AddComponent<Rigidbody>();
+        rb.isKinematic = true;
+        rb.useGravity = false;
+
+        MeshRenderer mr = wall.GetComponent<MeshRenderer>();
+
+        if (mr != null)
+            mr.enabled = showOutWalls;
+    }
+
+    public void SetClosestPlayersToChaseBall()
+    {
+        if (allPlayersInGame.Count == 0 || ballTransform == null) return;
+
+        InGamePlayerAI closestOur = null;
+        InGamePlayerAI closestEnemy = null;
+
+        float ourDist = float.MaxValue;
+        float enemyDist = float.MaxValue;
+
+        foreach (var p in allPlayersInGame)
+        {
+            if (p == null) continue;
+
+            float d = Vector3.Distance(p.transform.position, ballTransform.position);
+
+            if (p.isOurTeam)
+            {
+                if (d < ourDist)
+                {
+                    ourDist = d;
+                    closestOur = p;
+                }
+            }
+            else
+            {
+                if (d < enemyDist)
+                {
+                    enemyDist = d;
+                    closestEnemy = p;
+                }
+            }
+        }
+
+        foreach (var p in allPlayersInGame)
+        {
+            if (p != null)
+                p.isChasingBall = false;
+        }
+
+        if (closestOur != null)
+            closestOur.isChasingBall = true;
+
+        if (closestEnemy != null)
+            closestEnemy.isChasingBall = true;
+    }
+
+    public void ResetChasingFlags()
+    {
+        foreach (var p in allPlayersInGame)
+        {
+            if (p != null)
+                p.isChasingBall = false;
+        }
+    }
+
+    private void CloseAllSequencePanels()
+    {
+        actionUIGroup?.SetActive(false);
+        panelArea1and2?.SetActive(false);
+        panelArea3and4?.SetActive(false);
+        panelArea5?.SetActive(false);
+    }
+
+    public void OnClickNormalPass()
+    {
+        ResumeGame();
+        currentPossessor?.GetComponent<InGamePlayerAI>()?.ExecutePass();
+    }
+
+    public void OnClickNormalShoot()
+    {
+        ResumeGame();
+        currentPossessor?.GetComponent<InGamePlayerAI>()?.ExecuteShoot();
+    }
+
+    public void OnClickDribble()
+    {
+        ResumeGame();
+        currentPossessor?.GetComponent<InGamePlayerAI>()?.ExecuteDribble();
+    }
+
+    public void OnClickCross()
+    {
+        ResumeGame();
+        currentPossessor?.GetComponent<InGamePlayerAI>()?.ExecuteCross();
+    }
+
+    public void OnClickHeadingPass()
+    {
+        ResumeGame();
+        currentPossessor?.GetComponent<InGamePlayerAI>()?.ExecuteHeadingPass();
+    }
+
+    public void OnClickHeadingShoot()
+    {
+        ResumeGame();
+        currentPossessor?.GetComponent<InGamePlayerAI>()?.ExecuteHeadingShoot();
+    }
+
+    public void OnClickShedding()
+    {
+        ResumeGame();
     }
 }

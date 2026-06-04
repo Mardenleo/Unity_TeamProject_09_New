@@ -17393,7 +17393,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 360, y: 130}
+  m_AnchoredPosition: {x: 0, y: 130}
   m_SizeDelta: {x: 280, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &173494704
@@ -36267,7 +36267,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 130}
+  m_AnchoredPosition: {x: -360, y: 130}
   m_SizeDelta: {x: 280, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &371040580
@@ -53808,10 +53808,21 @@ MonoBehaviour:
   panelArea1and2: {fileID: 585793180}
   panelArea3and4: {fileID: 728778129}
   panelArea5: {fileID: 1817469340}
-  camBroadCast: {fileID: 1743204621}
-  camCloseUp: {fileID: 1218229282}
-  fieldHalfLengthX: 150
-  fieldHalfWidthZ: 100
+  mainGameCamera: {fileID: 766600548}
+  outMinX: -25
+  outMaxX: 95.6
+  outMinZ: -40
+  outMaxZ: 28
+  leftGoalX: -25
+  rightGoalX: 95.62
+  useOutBounce: 1
+  createOutWalls: 1
+  showOutWalls: 1
+  wallHeight: 6
+  wallThickness: 1.5
+  outBouncePower: 14
+  ballBounceMaterial: {fileID: 0}
+  sequenceCooldown: 1.2
 --- !u!1 &581793879
 GameObject:
   m_ObjectHideFlags: 0
@@ -71618,7 +71629,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 75
+  field of view: 22
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -71644,8 +71655,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 766600544}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268343, y: 0.000000001227158, z: -5.0830545e-10, w: 0.92387956}
-  m_LocalPosition: {x: 22.54, y: 15.264, z: -96.04}
+  m_LocalRotation: {x: 0.31622782, y: -0.000000023293696, z: 0.000000007764566, w: 0.9486833}
+  m_LocalPosition: {x: 22.54, y: 6.264, z: -89.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -103207,7 +103218,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 130}
+  m_AnchoredPosition: {x: 360, y: 130}
   m_SizeDelta: {x: 280, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1089563086
@@ -134543,52 +134554,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8c789c3f12b1a4475a704b6bda3a6df5, type: 3}
   m_PrefabInstance: {fileID: 1452956130}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1453111057
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1453111059}
-  - component: {fileID: 1453111058}
-  m_Layer: 0
-  m_Name: InGameCameraController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1453111058
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1453111057}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2575820ed2b7b435fb330c30b5adedc4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InGameCameraController
-  camBroadCast: {fileID: 1743204622}
-  camCloseUp: {fileID: 1218229283}
---- !u!4 &1453111059
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1453111057}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 272.92188, y: 0, z: 110.80956}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1453240913
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -178716,7 +178681,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -360, y: 130}
+  m_AnchoredPosition: {x: 0, y: 130}
   m_SizeDelta: {x: 280, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1928519653
@@ -198799,4 +198764,3 @@ SceneRoots:
   - {fileID: 766600549}
   - {fileID: 1743204625}
   - {fileID: 1218229286}
-  - {fileID: 1453111059}

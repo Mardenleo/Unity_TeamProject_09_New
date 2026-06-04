@@ -180,7 +180,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InGamePlayerAI
   isOurTeam: 0
-  moveSpeed: 0
+  moveSpeed: 5
+  shootPower: 15
+  passAccuracy: 40
   isChasingBall: 0
 --- !u!54 &1290256774013678872
 Rigidbody:
