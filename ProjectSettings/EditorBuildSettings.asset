@@ -36,7 +36,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MatchScene/MatchScene.unity
     guid: 179360a241fdb48bcb4a2c70ea3686fe
   - enabled: 1
-    path: Assets/Scenes/MatchResult.unity
+    path: Assets/Scenes/MatchResult/MatchResult.unity
     guid: 02b3d6de525924643a97fce79ba6fd67
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

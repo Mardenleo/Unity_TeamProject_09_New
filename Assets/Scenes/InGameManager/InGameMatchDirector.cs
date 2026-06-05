@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class InGameMatchDirector : MonoBehaviour
 {
@@ -33,8 +34,14 @@ public class InGameMatchDirector : MonoBehaviour
     public float playerY = 0f;
     public float ballY = 0.3f;
 
+    [Header("경기 시간")]
+    public float realMatchDuration = 120f;
+    public float displayMatchMinutes = 90f;
+
+    [Header("씬 설정")]
+    public string matchResultSceneName = "MatchResult";
+
     [Header("경기 설정")]
-    public float matchTime = 120f;
     public int currentArea = 1;
     public int area1SuccessCount = 0;
     public int ourScore = 0;
@@ -55,7 +62,7 @@ public class InGameMatchDirector : MonoBehaviour
     public int area5HeadingShootRate = 40;
     public int enemyCounterGoalRate = 10;
 
-    private float currentTime;
+    private float currentTime = 0f;
     private bool isMatchOver = false;
     private bool isSequenceOpen = false;
 
@@ -78,7 +85,8 @@ public class InGameMatchDirector : MonoBehaviour
 
     private void Start()
     {
-        currentTime = matchTime;
+        Time.timeScale = 1f;
+        currentTime = 0f;
         centerZ = (fieldMinZ + fieldMaxZ) * 0.5f;
 
         FindBall();
@@ -97,15 +105,12 @@ public class InGameMatchDirector : MonoBehaviour
     {
         if (isMatchOver) return;
 
-        if (Time.timeScale > 0f)
-        {
-            currentTime -= Time.deltaTime;
+        currentTime += Time.unscaledDeltaTime;
 
-            if (currentTime <= 0f)
-            {
-                currentTime = 0f;
-                EndMatch();
-            }
+        if (currentTime >= realMatchDuration)
+        {
+            currentTime = realMatchDuration;
+            EndMatch();
         }
 
         UpdateUI();
@@ -255,12 +260,10 @@ public class InGameMatchDirector : MonoBehaviour
                 yield return StartCoroutine(KickOffRoutine("GOAL! 득점 성공!"));
                 yield break;
             }
-            else
-            {
-                currentArea = nextArea;
-                MovePlayersByArea(currentArea);
-                SetResult($"{actionName} 성공! Area {currentArea}");
-            }
+
+            currentArea = nextArea;
+            MovePlayersByArea(currentArea);
+            SetResult($"{actionName} 성공! Area {currentArea}");
 
             yield return new WaitForSeconds(0.8f);
             OpenSequence();
@@ -286,10 +289,8 @@ public class InGameMatchDirector : MonoBehaviour
             yield return StartCoroutine(KickOffRoutine("상대 역습 성공! 실점했습니다."));
             yield break;
         }
-        else
-        {
-            SetResult("상대 역습을 막았습니다!");
-        }
+
+        SetResult("상대 역습을 막았습니다!");
 
         ResetAttack();
         MovePlayersByArea(1);
@@ -345,15 +346,9 @@ public class InGameMatchDirector : MonoBehaviour
         float progress = .45f;
         float zOffset = 0f;
 
-        if (area == 1)
-        {
-            progress = .45f;
-            zOffset = 0f;
-        }
-        else if (area == 2)
+        if (area == 2)
         {
             progress = .55f;
-            zOffset = 0f;
         }
         else if (area == 3)
         {
@@ -396,7 +391,6 @@ public class InGameMatchDirector : MonoBehaviour
     {
         int i = Mathf.Clamp(index, 0, 10);
 
-        // 0 GK / 1~4 DF / 5~8 MF / 9~10 FW
         float[] z = { 0, -14, -5, 5, 14, -11, -4, 4, 11, -5, 5 };
 
         float[] a1 = { .06f, .18f, .18f, .18f, .18f, .36f, .40f, .44f, .48f, .58f, .62f };
@@ -424,7 +418,6 @@ public class InGameMatchDirector : MonoBehaviour
 
         float[] z = { 0, -14, -5, 5, 14, -11, -4, 4, 11, -5, 5 };
 
-        // 상대는 우리 공격이 전진할수록 자기 골대 앞에 더 내려앉아야 함
         float[] e1 = { .94f, .80f, .80f, .80f, .80f, .68f, .64f, .60f, .56f, .48f, .44f };
         float[] e2 = { .94f, .84f, .84f, .84f, .84f, .72f, .68f, .64f, .60f, .52f, .48f };
         float[] e34 = { .96f, .88f, .88f, .88f, .88f, .78f, .74f, .70f, .66f, .58f, .54f };
@@ -559,25 +552,10 @@ public class InGameMatchDirector : MonoBehaviour
 
     private void ShowBroadcastCamera()
     {
-        /*
-        if (camBroadCast != null)
-            camBroadCast.SetActive(true);
-
-        if (camCloseUp != null)
-            camCloseUp.SetActive(false);
-        */
     }
 
     private void ShowCloseUpCamera()
     {
-        /*
-        if (camBroadCast != null)
-            camBroadCast.SetActive(false);
-
-        if (camCloseUp != null)
-            camCloseUp.SetActive(true);
-        */
-
     }
 
     private void SetResult(string msg)
@@ -596,21 +574,30 @@ public class InGameMatchDirector : MonoBehaviour
 
         if (timerText != null)
         {
-            int min = Mathf.FloorToInt(currentTime / 60f);
-            int sec = Mathf.FloorToInt(currentTime % 60f);
+            float progress = realMatchDuration <= 0f ? 0f : currentTime / realMatchDuration;
+            progress = Mathf.Clamp01(progress);
+
+            float displayTime = progress * displayMatchMinutes * 60f;
+
+            int min = Mathf.FloorToInt(displayTime / 60f);
+            int sec = Mathf.FloorToInt(displayTime % 60f);
+
             timerText.text = $"{min:00}:{sec:00}";
         }
     }
 
     private void EndMatch()
     {
+        if (isMatchOver) return;
+
         isMatchOver = true;
         Time.timeScale = 1f;
         CloseAllPanels();
 
-        if (ourScore > enemyScore) SetResult("경기 종료! 승리!");
-        else if (ourScore < enemyScore) SetResult("경기 종료! 패배!");
-        else SetResult("경기 종료! 무승부!");
+        if (GameDataManager.Instance != null)
+            GameDataManager.Instance.SaveMatchResult(ourScore, enemyScore);
+
+        SceneManager.LoadScene(matchResultSceneName);
     }
 
     public void OnClickNormalPass()
