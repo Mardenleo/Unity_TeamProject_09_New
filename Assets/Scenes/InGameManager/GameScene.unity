@@ -53951,29 +53951,29 @@ MonoBehaviour:
   areaText: {fileID: 0}
   camBroadCast: {fileID: 1743204621}
   camCloseUp: {fileID: 1218229282}
+  decisionCameraDistance: 6
+  decisionCameraHeight: 2.3
+  decisionLookAhead: 8
+  decisionLookHeight: 1.2
+  tacticalPaddingX: 12
   fieldMinX: -35
   fieldMaxX: 105
   fieldMinZ: -115
   fieldMaxZ: -45
   playerY: 0
   ballY: 0.3
+  ourTeamDefendsLeftGoal: 0
   realMatchDuration: 120
   displayMatchMinutes: 90
+  matchResultSceneName: MatchResult
   currentArea: 1
-  area1SuccessCount: 0
   ourScore: 0
   enemyScore: 0
   area1PassRate: 95
   area1DribbleRate: 95
-  area1ShootRate: 8
   area2PassRate: 70
   area2DribbleRate: 70
-  area2ShootRate: 16
-  area34DribbleRate: 50
   area34CrossRate: 50
-  area34ShootRate: 30
-  area5SheddingRate: 80
-  area5HeadingPassRate: 80
   area5HeadingShootRate: 40
   enemyCounterGoalRate: 10
 --- !u!1 &581793879
